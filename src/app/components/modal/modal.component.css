@@ -1,0 +1,8 @@
+.modal-content-dark {
+    background-color: black;
+    border: 1px solid rgb(196, 194, 194);
+}
+
+.modal-content-light {
+    background-color: white;
+}

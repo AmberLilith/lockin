@@ -1,0 +1,37 @@
+<div class="card shadow">
+    <div class="card-header">
+        <h5 class="text-capitalize">{{ login.plataformName }}</h5>
+    </div>
+    <div class="card-body">
+        <label for="inputUser">Usuário:</label>
+        <div class="input-group mb-3">
+            <input #inputUser type="text" class="form-control" placeholder="" aria-label="Usuário do login"
+                [value]="login.user" disabled>
+            <button class="btn btn-outline-secondary" type="button" (click)="copyUser(login.user)">
+                <icon [name]="'copy'"></icon>
+            </button>
+        </div>
+
+        <label for="inputPassword">Senha:</label>
+        <div class="d-grid gap-3">
+            <div class="input-group mb-3">
+                <input #inputPassword type="{{showPass ? 'text' : 'password'}}" class="form-control" aria-label="Senha do login" [value]="displayPassword || login.password"
+                    disabled>
+                <button class="btn btn-outline-secondary" type="button" (click)="copyPassword(login.password)">
+                    <icon [name]="'copy'"></icon>
+                </button>
+                <button class="btn btn-outline-secondary" type="button" (click)="showPassword(login.password);showPass=true">
+                    <icon [name]="'visibility'"></icon>
+                </button>
+            </div>
+            <a href="#" class="btn btn-danger align-middle">
+                <icon [name]="'delete'"></icon>
+                Deletar
+            </a>
+            <a href="#" class="btn btn-primary">
+                <icon [name]="'edit'"></icon>
+                Editar
+            </a>
+        </div>
+    </div>
+</div>

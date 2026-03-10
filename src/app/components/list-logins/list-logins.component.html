@@ -1,0 +1,29 @@
+<div class="container">
+  <input #inputSearchPlatafomName type="text" class="text"
+  (keyup)="getLoginByPlataformName(inputSearchPlatafomName.value)">
+
+@if (showModal) {
+<app-modal [title]="'Confirme exclusão'" [message]="'Deseja realmente excluir o relato selecionado?'"
+  [btnOkText]="'Sim, Excluir'" (onCancel)="showModal = false"
+  [btnCancelText]="'Não, Cancelar Exclusão'">
+</app-modal>
+}
+
+<button (click)="themeService.toggle()">
+  {{ themeService.isDarkMode() ? '☀️ Claro' : '🌙 Escuro' }}
+</button>
+
+<div class="cards-container">
+  
+  @for (item of loginsListToShow; track item.id) {
+    <login-card
+    [login]=item>
+  </login-card>
+  } @empty {
+    <p>Nenhum login encontrado.</p>
+  }
+</div>
+</div>
+
+
+
