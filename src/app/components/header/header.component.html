@@ -1,5 +1,6 @@
-<nav class="navbar mb-3 text-bg-primary p-3">
-    <button class="btn btn-outline-secondary" type="button">
+<nav class="navbar navHeader mb-3 text-bg-primary p-3">
+    
+    <button class="btn btn-outline-secondary" type="button"  (click)="sidebarOpen = !sidebarOpen">
         <icon [name]="'menu'" [fillColor]="'#FFFFFF'"></icon>
     </button>
 
@@ -14,3 +15,7 @@
         </label>
     </div>
 </nav>
+
+<side-menu [(isOpen)]="sidebarOpen" />
+
+

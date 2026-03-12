@@ -1,7 +1,15 @@
 <div class="card shadow">
-    <div class="card-header">
-        <h5 class="text-capitalize">{{ login.plataformName }}</h5>
+    <div class="card-header d-flex justify-content-between align-items-center">
+    <h5 class="text-capitalize">{{login.plataformName}}</h5>
+    <div class="d-flex gap-2">
+        <button class="btn btn-sm btn-primary" (click)="showModalEditLogin=true">
+            <icon [name]="'edit'" fillColor="#FFFFFF"></icon>
+        </button>
+        <button class="btn btn-sm btn-danger">
+            <icon [name]="'delete'" fillColor="#FFFFFF"/>
+        </button>
     </div>
+</div>
     <div class="card-body">
         <div class="input-group mb-3">
                 <div class="form-floating">
@@ -29,14 +37,6 @@
                     <icon [name]="showPass ? 'visibility-off' : 'visibility'"></icon>
                 </button>
             </div>
-            <a href="#" class="btn btn-danger align-middle">
-                <icon [name]="'delete'" fillColor="#FFFFFF"></icon>
-                Deletar
-            </a>
-            <a href="#" class="btn btn-primary" (click)="showModalEditLogin=true">
-                <icon [name]="'edit'" fillColor="#FFFFFF"></icon>
-                Editar
-            </a>
         </div>
     </div>
 </div>

@@ -1,4 +1,4 @@
-<div class="container">
+
   <app-header />
 
   <button class="btn btn-primary m-3" (click)="showModalCreateLogin=true">
@@ -27,7 +27,6 @@
     <p>Nenhum login encontrado.</p>
     }
   </div>
-</div>
 
 @if (showModal) {
 <modal [title]="'Confirme exclusão'" [message]="'Deseja realmente excluir o relato selecionado?'"
