@@ -36,14 +36,11 @@ export class CryptoService {
     combined.set(iv, 0);
     combined.set(new Uint8Array(encrypted), iv.byteLength);
     const retorno = btoa(String.fromCharCode(...combined))
-    console.log(retorno)
     return retorno;
   }
 
   // Descriptografa — recebe string base64 e retorna texto original
   async decrypt(cipherText: string): Promise<string> {
-    console.log('valor recebido:', cipherText)
-  console.log('tamanho:', cipherText.length)
     const key = await this.getKey();
     const combined = Uint8Array.from(atob(cipherText), c => c.charCodeAt(0));
 
@@ -55,7 +52,6 @@ export class CryptoService {
       key,
       data
     );
-    console.log(new TextDecoder().decode(decrypted))
     return new TextDecoder().decode(decrypted);
   }
 }

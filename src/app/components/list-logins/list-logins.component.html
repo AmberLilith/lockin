@@ -3,10 +3,10 @@
   (keyup)="getLoginByPlataformName(inputSearchPlatafomName.value)">
 
 @if (showModal) {
-<app-modal [title]="'Confirme exclusão'" [message]="'Deseja realmente excluir o relato selecionado?'"
+<modal [title]="'Confirme exclusão'" [message]="'Deseja realmente excluir o relato selecionado?'"
   [btnOkText]="'Sim, Excluir'" (onCancel)="showModal = false"
   [btnCancelText]="'Não, Cancelar Exclusão'">
-</app-modal>
+</modal>
 }
 
 <button (click)="themeService.toggle()">

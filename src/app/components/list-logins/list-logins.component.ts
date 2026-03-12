@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
-import { ModalComponent } from "../modal/modal.component";
 import { Login } from '../../models/Login';
+import { CryptoService } from '../../services/crypto-service';
 import { ThemeService } from '../../services/theme-service/theme-service.service';
 import { LoginCardComponent } from "../login-card/login-card.component";
-import { CryptoService } from '../../services/crypto-service';
+import { ModalComponent } from "../modal/modal.component";
 
 @Component({
   selector: 'app-list-logins',

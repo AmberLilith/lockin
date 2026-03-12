@@ -1,0 +1,72 @@
+<form [formGroup]="loginFormGroup">
+    <div class="d-grid gap-1">
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" placeholder="Nome Plataforma" formControlName="plataformName"
+                [class.is-invalid]="plataformName?.invalid && plataformName?.touched">
+            <label>Nome Plataforma:</label>
+            <div class="invalid-feedback">
+                Campo obrigatório
+            </div>
+        </div>
+
+        <div class="input-group mb-3">
+            <div class="form-floating">
+                <input #inputUser type="text" class="form-control" placeholder="Digite nome do usuário"
+                    formControlName="user" [class.is-invalid]="user?.invalid && user?.touched">
+                <label for="inputUser">Digite nome do usuário:</label>
+            </div>
+            <button class="btn btn-outline-secondary" type="button"
+                (click)="loginActionsService.copyUser(inputUser.value)">
+                <icon [name]="'copy'"></icon>
+            </button>
+        </div>
+        @if(user?.invalid && user?.touched){
+        <div class="text-danger small">Campo obrigatório</div>
+        }
+
+        <div class="input-group mb-3">
+            <div class="form-floating">
+                <input #inputPassword type="{{showPass ? 'text' : 'password'}}" class="form-control"
+                    placeholder="Digite a senha" [value]="decryptedPassword" formControlName="password" [class.is-invalid]="password?.invalid && password?.touched">
+                <label for="inputPassword">Senha:</label>
+            </div>
+            <button class="btn btn-outline-secondary" type="button" (click)="showModalGenPass=true">
+                <icon [name]="'settings'"></icon>
+            </button>
+            <button class="btn btn-outline-secondary" type="button"
+                (click)="loginActionsService.copyPassword(this.login.password)">
+                <icon [name]="'copy'"></icon>
+            </button>
+            <button class="btn btn-outline-secondary" type="button"
+                (click)="inputPassword.value == decryptedPassword ? inputPassword.value = decryptedPassword : inputPassword.value =inputPassword.value;showPass=!showPass">
+                <icon [name]="showPass ? 'visibility-off' : 'visibility'"></icon>
+            </button>
+        </div>
+        @if(password?.invalid && password?.touched){
+        <div class="text-danger small">Campo obrigatório</div>
+        }
+        <div class="mb-3">
+            <div class="form-floating">
+                <input #inputRepeatPassword type="{{showPass ? 'text' : 'password'}}" class="form-control"
+                    placeholder="Digite novamente a senha">
+                <label for="inputRepeatPassword">Confirmação Senha:</label>
+                @if(inputPassword.value != inputRepeatPassword.value) {
+                <div style="color: rgb(167, 11, 11);">
+                    As senhas devem ser iguais
+                </div>
+                }
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-primary">Salvar</button>
+
+        <button type="button" class="btn btn-danger" (click)="handleCancel()">Cancelar</button>
+    </div>
+</form>
+
+@if(showModalGenPass){
+<modal [showFooter]="false" [title]="'Gerar Senha'" (onCancel)="showModalGenPass=false" [title]="'Gerar senha'">
+    <generate-password (onOk)="getGeneratedPassword($event)" (onCancel)="showModalGenPass=false"
+        modal-body></generate-password>
+</modal>
+}

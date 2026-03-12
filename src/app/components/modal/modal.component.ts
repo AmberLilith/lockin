@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-modal',
+  selector: 'modal',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './modal.component.html',
@@ -10,11 +10,13 @@ import { CommonModule } from '@angular/common';
 })
 export class ModalComponent {
   @Input() title: string = 'Confirmação';
-  @Input() message: string = 'Deseja realizar esta ação?';
+  @Input() message: string | null = null;
 
   @Input() btnOkText: string = 'Confirmar';
   @Input() btnCancelText: string = 'Cancelar';
   @Input() btnCancelEnabled: boolean = true;
+  @Input() showFooter: boolean = true;
+  @Input() showHeader: boolean = true;
 
   @Output() onOk = new EventEmitter<void>();
   @Output() onCancel = new EventEmitter<void>();
