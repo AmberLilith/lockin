@@ -1,0 +1,16 @@
+<nav class="navbar mb-3 text-bg-primary p-3">
+    <button class="btn btn-outline-secondary" type="button">
+        <icon [name]="'menu'" [fillColor]="'#FFFFFF'"></icon>
+    </button>
+
+    <span class="navbar-brand mx-auto">Lockin</span>
+
+    <div class="form-check form-switch mb-0">
+        <input class="form-check-input" type="checkbox" role="switch" id="themeSwitch"
+            [checked]="themeService.isDarkMode()"
+            (change)="themeService.toggle()">
+        <label class="form-check-label" for="themeSwitch">
+            {{ themeService.isDarkMode() ? '🌙' : '☀️' }}
+        </label>
+    </div>
+</nav>

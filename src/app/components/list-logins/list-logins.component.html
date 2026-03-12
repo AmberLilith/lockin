@@ -1,29 +1,42 @@
 <div class="container">
-  <input #inputSearchPlatafomName type="text" class="text"
-  (keyup)="getLoginByPlataformName(inputSearchPlatafomName.value)">
+  <app-header />
+
+  <button class="btn btn-primary m-3" (click)="showModalCreateLogin=true">
+    <icon [name]="'new'" fillColor="#FFFFFF"/>
+    Novo
+  </button>
+
+  <div class="input-group mb-3">
+    <span class="input-group-text" id="basic-addon1">
+      <icon name="search" />
+    </span>
+    <div class="form-floating">
+      <input type="text" #inputSearchPlatafomName class="form-control" placeholder="Digite nome da plataforma"
+        aria-label="Digite nome da plataforma" aria-describedby="basic-addon1"
+        (keyup)="getLoginByPlataformName(inputSearchPlatafomName.value)">
+      <label>Digite nome da plataforma</label>
+    </div>
+  </div>
+
+  <div class="cards-container">
+
+    @for (item of loginsListToShow; track item.id) {
+    <login-card [login]=item>
+    </login-card>
+    } @empty {
+    <p>Nenhum login encontrado.</p>
+    }
+  </div>
+</div>
 
 @if (showModal) {
 <modal [title]="'Confirme exclusão'" [message]="'Deseja realmente excluir o relato selecionado?'"
-  [btnOkText]="'Sim, Excluir'" (onCancel)="showModal = false"
-  [btnCancelText]="'Não, Cancelar Exclusão'">
+  [btnOkText]="'Sim, Excluir'" (onCancel)="showModal = false" [btnCancelText]="'Não, Cancelar Exclusão'">
 </modal>
 }
 
-<button (click)="themeService.toggle()">
-  {{ themeService.isDarkMode() ? '☀️ Claro' : '🌙 Escuro' }}
-</button>
-
-<div class="cards-container">
-  
-  @for (item of loginsListToShow; track item.id) {
-    <login-card
-    [login]=item>
-  </login-card>
-  } @empty {
-    <p>Nenhum login encontrado.</p>
-  }
-</div>
-</div>
-
-
-
+@if(showModalCreateLogin){
+    <modal [showFooter]="false" (onCancel)="showModalCreateLogin=false" [title]="'Criar Login'">
+        <login-form modal-body (onCancel)="showModalCreateLogin=false"/>
+    </modal>
+}

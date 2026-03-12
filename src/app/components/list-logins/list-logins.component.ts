@@ -4,18 +4,22 @@ import { CryptoService } from '../../services/crypto-service';
 import { ThemeService } from '../../services/theme-service/theme-service.service';
 import { LoginCardComponent } from "../login-card/login-card.component";
 import { ModalComponent } from "../modal/modal.component";
+import { HeaderComponent } from '../header/header.component';
+import { IconComponent } from "../icon/icon.component";
+import { LoginFormComponent } from '../login-form/login-form.component';
 
 @Component({
   selector: 'app-list-logins',
   standalone: true,
-  imports: [ModalComponent, LoginCardComponent],
+  imports: [ModalComponent, LoginCardComponent, HeaderComponent, IconComponent, LoginFormComponent],
   templateUrl: './list-logins.component.html',
   styleUrl: './list-logins.component.css'
 })
 export class ListLoginsComponent {
   themeService = inject(ThemeService);
   cryptoService = inject(CryptoService);
-  showModal = false  
+  showModalCreateLogin: boolean  = false;
+  showModal: boolean = false;  
   
 
  loginsList: Login[] | null = [
