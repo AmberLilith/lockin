@@ -1,0 +1,5 @@
+.alert-wrapper {
+  position: fixed;
+  z-index: 1100;
+  padding: 16px;
+}

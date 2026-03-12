@@ -6,11 +6,12 @@ import { GeneratePasswordComponent } from '../generate-password/generate-passwor
 import { IconComponent } from '../icon/icon.component';
 import { ModalComponent } from '../modal/modal.component';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AlertComponent } from '../alert/alert.component';
 
 @Component({
   selector: 'login-form',
   standalone: true,
-  imports: [IconComponent, GeneratePasswordComponent, ModalComponent, ReactiveFormsModule],
+  imports: [IconComponent, GeneratePasswordComponent, ModalComponent, ReactiveFormsModule, AlertComponent],
   templateUrl: './login-form.component.html',
   styleUrl: './login-form.component.css'
 })
@@ -29,6 +30,7 @@ export class LoginFormComponent {
 
   @ViewChild("inputPassword") inputPassword!: ElementRef<HTMLInputElement>;
   @ViewChild("inputRepeatPassword") inputRepeatPassword!: ElementRef<HTMLInputElement>;
+ 
 
   constructor(){
     this.loginFormGroup = new FormGroup({
@@ -68,5 +70,9 @@ get password() {
     if(this.login){
       this.decryptedPassword = await this.cryptoService.decrypt(this.login.password);
     }
+  }
+
+  edit(){
+    this.onOk.emit();
   }
 }

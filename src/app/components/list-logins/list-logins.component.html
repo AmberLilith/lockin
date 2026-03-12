@@ -36,6 +36,14 @@
 
 @if(showModalCreateLogin){
     <modal [showFooter]="false" (onCancel)="showModalCreateLogin=false" [title]="'Criar Login'">
-        <login-form modal-body (onCancel)="showModalCreateLogin=false"/>
+        <login-form modal-body (onCancel)="showModalCreateLogin=false" (onOk)="save()"/>
     </modal>
 }
+
+<app-alert #alertCreation
+    message="Alteração(ões) salva(s) com sucesso!"
+    type="success"
+    [duration]="4000"
+    vertical="center"
+    horizontal="center"
+/>

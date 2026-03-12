@@ -1,39 +1,40 @@
 <div class="card shadow">
     <div class="card-header d-flex justify-content-between align-items-center">
-    <h5 class="text-capitalize">{{login.plataformName}}</h5>
-    <div class="d-flex gap-2">
-        <button class="btn btn-sm btn-primary" (click)="showModalEditLogin=true">
-            <icon [name]="'edit'" fillColor="#FFFFFF"></icon>
-        </button>
-        <button class="btn btn-sm btn-danger">
-            <icon [name]="'delete'" fillColor="#FFFFFF"/>
-        </button>
+        <h5 class="text-capitalize">{{login.plataformName}}</h5>
+        <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-primary" (click)="showModalEditLogin=true">
+                <icon [name]="'edit'" fillColor="#FFFFFF"></icon>
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="showModalDeleteLogin=true"> 
+                <icon [name]="'delete'" fillColor="#FFFFFF" />
+            </button>
+        </div>
     </div>
-</div>
     <div class="card-body">
         <div class="input-group mb-3">
-                <div class="form-floating">
-            <input #inputUser type="text" class="form-control"
-                placeholder="" aria-label="Usuário do login" [value]="login.user" disabled>
+            <div class="form-floating">
+                <input #inputUser type="text" class="form-control" placeholder="" aria-label="Usuário do login"
+                    [value]="login.user" disabled>
                 <label for="inputRepeatPassword">Usuário:</label>
-        </div>
+            </div>
             <button class="btn btn-outline-secondary" type="button" (click)="loginActionsService.copyUser(login.user)">
-                <icon [name]="'copy'"/>
+                <icon [name]="'copy'" />
             </button>
         </div>
 
         <div class="d-grid gap-3">
             <div class="input-group mb-3">
-                    <div class="form-floating">
-            <input #inputPassword type="{{showPass ? 'text' : 'password'}}" class="form-control"
-                placeholder="Digite novamente a senha" [value]="displayPassword || login.password"
-                    disabled>
-                <label for="inputRepeatPassword">Senha:</label>
-        </div>
-                <button class="btn btn-outline-secondary" type="button" (click)="loginActionsService.copyPassword(login.password)">
+                <div class="form-floating">
+                    <input #inputPassword type="{{showPass ? 'text' : 'password'}}" class="form-control"
+                        placeholder="Digite novamente a senha" [value]="displayPassword || login.password" disabled>
+                    <label for="inputRepeatPassword">Senha:</label>
+                </div>
+                <button class="btn btn-outline-secondary" type="button"
+                    (click)="loginActionsService.copyPassword(login.password)">
                     <icon [name]="'copy'"></icon>
                 </button>
-                <button class="btn btn-outline-secondary" type="button" (click)="inputPassword.value = decryptedPassword;showPass=!showPass">
+                <button class="btn btn-outline-secondary" type="button"
+                    (click)="inputPassword.value = decryptedPassword;showPass=!showPass">
                     <icon [name]="showPass ? 'visibility-off' : 'visibility'"></icon>
                 </button>
             </div>
@@ -42,8 +43,29 @@
 </div>
 
 @if(showModalEditLogin){
-    <modal [showFooter]="false" (onCancel)="showModalEditLogin=false" [title]="'Alterar Login'">
-        <login-form modal-body (onCancel)="showModalEditLogin=false"/>
-    </modal>
+<modal [showFooter]="false" (onCancel)="showModalEditLogin=false"  [title]="'Alterar Login'">
+    <login-form modal-body (onCancel)="showModalEditLogin=false" (onOk)="showModalEditLogin=false;edit()"/>
+</modal>
 }
 
+@if(showModalDeleteLogin){
+<modal  (onOk)="delete()" (onCancel)="showModalDeleteLogin=false" [title]="'Excluir Login'"
+    [message]="'Deseja realmente excluir o login' + login.plataformName + '?'" >
+</modal>
+}
+
+<app-alert #alertExclusion
+    message="Login excluído com sucesso!"
+    type="success"
+    [duration]="4000"
+    vertical="center"
+    horizontal="center"
+/>
+
+<app-alert #alertEdition
+    message="Alteração(ões) salva(s) com sucesso!"
+    type="success"
+    [duration]="4000"
+    vertical="center"
+    horizontal="center"
+/>

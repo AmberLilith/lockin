@@ -1,0 +1,8 @@
+@if(visible){
+    <div class="alert-wrapper" [ngStyle]="wrapperStyle">
+        <div class="alert alert-{{type}} alert-dismissible d-flex align-items-center shadow" role="alert">
+            <span>{{ message }}</span>
+            <button type="button" class="btn-close ms-3" (click)="dismiss()"></button>
+        </div>
+    </div>
+}
