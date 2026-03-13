@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { Database, ref, set, get, remove, update } from '@angular/fire/database';
+import { Database, ref, set, remove, update, listVal } from '@angular/fire/database';
 import { AuthService } from '../auth-service/auth.service';
 import { Login } from '../../models/Login';
 import { CryptoService } from '../crypto-service';
+import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class LoginService {
@@ -16,11 +17,10 @@ export class LoginService {
     return `${uid}/logins`;
   }
 
-  async getAll(): Promise<Login[]> {
+  // Agora retorna um Observable que atualiza automaticamente
+  getAll(): Observable<Login[]> {
     const loginsRef = ref(this.db, this.getBasePath());
-    const snapshot = await get(loginsRef);
-    if (!snapshot.exists()) return [];
-    return Object.values(snapshot.val()) as Login[];
+    return listVal<Login>(loginsRef);
   }
 
   async create(login: Omit<Login, 'id'>): Promise<void> {
