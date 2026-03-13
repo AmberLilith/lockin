@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../../src/environments/environments';
 
 @Injectable({ providedIn: 'root' })
 export class CryptoService {
 
-  // Defina uma chave secreta de 256 bits (32 chars) — guarde no environment.ts
-  private readonly SECRET_KEY = 'minha-chave-super-secreta-32byte'; // ⚠️ mova para environment
+  private readonly SECRET_KEY = environment.cryptoKey; 
 
   // Converte string para CryptoKey usando AES-256-GCM
   private async getKey(): Promise<CryptoKey> {
@@ -58,7 +58,7 @@ export class CryptoService {
 
 /* Como usar:
 const cifrado = await this.crypto.encrypt('Site Da Microsoft'); ou
-cu(){
+teste(){
     this.cryptoService.encrypt("cu").then((encrypted:string) =>{
         //ação que usa o valor retornado
     })

@@ -1,7 +1,7 @@
 <form [formGroup]="loginFormGroup">
     <div class="d-grid gap-1">
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" placeholder="Nome Plataforma" formControlName="plataformName"
+            <input type="text" class="form-control text-capitalize" placeholder="Nome Plataforma" formControlName="plataformName"
                 [class.is-invalid]="plataformName?.invalid && plataformName?.touched">
             <label>Nome Plataforma:</label>
             <div class="invalid-feedback">

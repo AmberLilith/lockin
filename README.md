@@ -1,27 +1,90 @@
 # Lockin
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.3.
+Caso precise encriptografar ou descriptografar vários logins ao mesmo tempo, use um dos 2 codigos abaixo no depurador do browser.
 
-## Development server
+<p style="color:red;margin:0px">
+IMPORTANTE
+</p>
+<p style="background-color: #46C2E8; padding:10px;margin:0px">
+Lembre sempre de ao chamar o método decryptFirebaseLogins, substituir 'sua-chave-secreta-32-caracteres!!' pela mesma que foi usada para encriptar
+</p>
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Encriptografar
 
-## Code scaffolding
+```
+async function encryptFirebaseLogins(data, secretKey) {
+  const keyMaterial = new TextEncoder().encode(secretKey.padEnd(32).slice(0, 32));
+  const key = await crypto.subtle.importKey('raw', keyMaterial, { name: 'AES-GCM' }, false, ['encrypt']);
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+  async function encryptText(text) {
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const encoded = new TextEncoder().encode(text);
+    const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, encoded);
+    const combined = new Uint8Array(iv.byteLength + encrypted.byteLength);
+    combined.set(iv, 0);
+    combined.set(new Uint8Array(encrypted), iv.byteLength);
+    return btoa(String.fromCharCode(...combined));
+  }
 
-## Build
+  const result = {};
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+  for (const uid of Object.keys(data)) {
+    result[uid] = { logins: {} };
+    for (const loginId of Object.keys(data[uid].logins)) {
+      const login = data[uid].logins[loginId];
+      result[uid].logins[loginId] = {
+        ...login,
+        password: await encryptText(login.password)
+      };
+    }
+  }
 
-## Running unit tests
+  return result;
+}
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+// Cole seu JSON aqui
+const data = { SEU JSON AQUI };
 
-## Running end-to-end tests
+encryptFirebaseLogins(data, 'sua-chave-secreta-32-caracteres!!').then(result => {
+  console.log(JSON.stringify(result, null, 2));
+});
+```
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## Descriptografar
 
-## Further help
+```
+async function decryptFirebaseLogins(data, secretKey) {
+  const keyMaterial = new TextEncoder().encode(secretKey.padEnd(32).slice(0, 32));
+  const key = await crypto.subtle.importKey('raw', keyMaterial, { name: 'AES-GCM' }, false, ['decrypt']);
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+  async function decryptText(cipherText) {
+    const combined = Uint8Array.from(atob(cipherText), c => c.charCodeAt(0));
+    const iv = combined.slice(0, 12);
+    const data = combined.slice(12);
+    const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
+    return new TextDecoder().decode(decrypted);
+  }
+
+  const result = {};
+
+  for (const uid of Object.keys(data)) {
+    result[uid] = { logins: {} };
+    for (const loginId of Object.keys(data[uid].logins)) {
+      const login = data[uid].logins[loginId];
+      result[uid].logins[loginId] = {
+        ...login,
+        password: await decryptText(login.password)
+      };
+    }
+  }
+
+  return result;
+}
+
+// Cole seu JSON aqui
+const data = { SEU JSON AQUI };
+
+decryptFirebaseLogins(data, 'sua-chave-secreta-32-caracteres!!').then(result => {
+  console.log(JSON.stringify(result, null, 2));
+});
+```
