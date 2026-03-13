@@ -1,6 +1,5 @@
 import { Component, inject, ViewChild } from '@angular/core';
 import { Login } from '../../models/Login';
-import { CryptoService } from '../../services/crypto-service';
 import { ThemeService } from '../../services/theme-service/theme-service.service';
 import { LoginCardComponent } from "../login-card/login-card.component";
 import { ModalComponent } from "../modal/modal.component";
@@ -8,6 +7,8 @@ import { HeaderComponent } from '../header/header.component';
 import { IconComponent } from "../icon/icon.component";
 import { LoginFormComponent } from '../login-form/login-form.component';
 import { AlertComponent } from '../alert/alert.component';
+import { LoginService } from '../../services/login-service/login.service';
+import { AuthService } from '../../services/auth-service/auth.service';
 
 @Component({
   selector: 'app-list-logins',
@@ -18,58 +19,38 @@ import { AlertComponent } from '../alert/alert.component';
 })
 export class ListLoginsComponent {
   themeService = inject(ThemeService);
-  cryptoService = inject(CryptoService);
+  loginService = inject(LoginService);
+  auth = inject(AuthService);
   showModalCreateLogin: boolean = false;
-  showModal: boolean = false;
+  showModalConfimExclusion: boolean = false;
 
   @ViewChild('alertCreation') alertCreation!: AlertComponent;
 
+  loginsList: Login[] = [];
+  loginsListToShow: Login[] = [];
 
-  loginsList: Login[] | null = [
-    {
-      "id": "-NpfPgrANpzwevA7q6lI",
-      "password": "r/3aZHNwsJnlHWr39CMZHWKxzrWS83FpJ79htT1DmC4OzFctCXuGRr8=",
-      "plataformName": "google",
-      "user": "amber.lilith.ordone@gmail.com"
-    },
-    {
-      "id": "-NpfPgrANpzwevA7q6l2",
-      "password": "T6nKuiaru2AeP0jeUj3nJIM/hPBLh4i//YtBKHhE8hkGGYGY",
-      "plataformName": "terra",
-      "user": "amber.lilith.ordone@gmail.com"
-    },
-    {
-      "id": "-NpfPgrANpzwevA7q6l3",
-      "password": "PaIpk4xiMSFL3L97lj9K2ouLxWRpffO0TLoYA+Z4S8c6p7tA",
-      "plataformName": "yahoo",
-      "user": "amber.lilith.ordone@gmail.com"
-    },
-    {
-      "id": "-NpfPgrANpzwevA7q6l4",
-      "password": "chy0tP0nBe8+I4JII4zw+tiAi24MZ0F0YhdJckO8haf4AXqJVhjNFiLBDA==",
-      "plataformName": "uol",
-      "user": "amber.lilith.ordone@gmail.com"
-    }
-  ]
+  async ngOnInit(): Promise<void> {
+    await this.loadLogins();
+  }
 
-  loginsListToShow: Login[] | null = []
-
-  async ngOnInit() {
-    this.loginsListToShow = this.loginsList
+  async loadLogins(): Promise<void> {
+    this.loginsList = await this.loginService.getAll();
+    this.loginsListToShow = this.loginsList;
   }
 
   getLoginByPlataformName(searchTerm: string): void {
     const term = searchTerm.trim().toLowerCase();
-
     this.loginsListToShow = !term
       ? this.loginsList
-      : (this.loginsList ?? []).filter(login =>
+      : this.loginsList.filter(login =>
         login.plataformName.toLowerCase().includes(term)
       );
   }
 
-  save(){   
-    this.showModalCreateLogin = false; 
+  async save(login: Omit<Login, 'id'>): Promise<void> {
+    await this.loginService.create(login);
+    await this.loadLogins();
+    this.showModalCreateLogin = false;
     this.alertCreation.show();
   }
 }

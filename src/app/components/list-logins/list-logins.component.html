@@ -1,7 +1,5 @@
 
-  <app-header />
-
-  <button class="btn btn-primary m-3" (click)="showModalCreateLogin=true">
+   <button class="btn btn-primary m-3" (click)="showModalCreateLogin=true">
     <icon [name]="'new'" fillColor="#FFFFFF"/>
     Novo
   </button>
@@ -21,22 +19,22 @@
   <div class="cards-container">
 
     @for (item of loginsListToShow; track item.id) {
-    <login-card [login]=item>
+    <login-card 
+        [login]="item"
+        (onDelete)="loadLogins()"
+        (onEdit)="loadLogins()">
     </login-card>
-    } @empty {
-    <p>Nenhum login encontrado.</p>
-    }
-  </div>
+}
 
-@if (showModal) {
+@if (showModalConfimExclusion) {
 <modal [title]="'Confirme exclusão'" [message]="'Deseja realmente excluir o relato selecionado?'"
-  [btnOkText]="'Sim, Excluir'" (onCancel)="showModal = false" [btnCancelText]="'Não, Cancelar Exclusão'">
+  [btnOkText]="'Sim, Excluir'" (onCancel)="showModalConfimExclusion = false" [btnCancelText]="'Não, Cancelar Exclusão'">
 </modal>
 }
 
 @if(showModalCreateLogin){
     <modal [showFooter]="false" (onCancel)="showModalCreateLogin=false" [title]="'Criar Login'">
-        <login-form modal-body (onCancel)="showModalCreateLogin=false" (onOk)="save()"/>
+        <login-form modal-body (onCancel)="showModalCreateLogin=false" (onOk)="save($event)"/>
     </modal>
 }
 
@@ -47,3 +45,4 @@
     vertical="center"
     horizontal="center"
 />
+

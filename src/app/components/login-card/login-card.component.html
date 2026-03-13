@@ -43,14 +43,14 @@
 </div>
 
 @if(showModalEditLogin){
-<modal [showFooter]="false" (onCancel)="showModalEditLogin=false"  [title]="'Alterar Login'">
-    <login-form modal-body (onCancel)="showModalEditLogin=false" (onOk)="showModalEditLogin=false;edit()"/>
+<modal [showFooter]="false" (onCancel)="showModalEditLogin=false"  [title]="'Alterar Login - ' + loginActionsService.capitalize(login.plataformName)">
+    <login-form modal-body [login]="login" (onCancel)="showModalEditLogin=false" (onOk)="showModalEditLogin=false;edit($event)"/>
 </modal>
 }
 
 @if(showModalDeleteLogin){
 <modal  (onOk)="delete()" (onCancel)="showModalDeleteLogin=false" [title]="'Excluir Login'"
-    [message]="'Deseja realmente excluir o login' + login.plataformName + '?'" >
+    [message]="'Deseja realmente excluir o login ' + loginActionsService.capitalize(login.plataformName) + '?'" >
 </modal>
 }
 

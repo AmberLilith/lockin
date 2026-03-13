@@ -34,7 +34,7 @@
                 <icon [name]="'settings'"></icon>
             </button>
             <button class="btn btn-outline-secondary" type="button"
-                (click)="loginActionsService.copyPassword(this.login.password)">
+                (click)="loginActionsService.copyInputPasswordValue(inputPassword.value)">
                 <icon [name]="'copy'"></icon>
             </button>
             <button class="btn btn-outline-secondary" type="button"
@@ -48,7 +48,7 @@
         <div class="mb-3">
             <div class="form-floating">
                 <input #inputRepeatPassword type="{{showPass ? 'text' : 'password'}}" class="form-control"
-                    placeholder="Digite novamente a senha">
+                    placeholder="Digite novamente a senha" [value]="decryptedPassword">
                 <label for="inputRepeatPassword">Confirmação Senha:</label>
                 @if(inputPassword.value != inputRepeatPassword.value) {
                 <div style="color: rgb(167, 11, 11);">
@@ -58,7 +58,7 @@
             </div>
         </div>
 
-        <button type="button" class="btn btn-primary" (click)="edit()">Salvar</button>
+        <button type="button" class="btn btn-primary" (click)="save()">Salvar</button>
 
         <button type="button" class="btn btn-danger" (click)="handleCancel()">Cancelar</button>
     </div>

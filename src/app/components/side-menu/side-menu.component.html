@@ -1,5 +1,5 @@
 @if(isOpen){
-    <div class="sidebar-overlay" (click)="close()"></div>
+<div class="sidebar-overlay" (click)="close()"></div>
 }
 
 <div class="sidebar" [class.sidebar-open]="isOpen">
@@ -24,7 +24,7 @@
             </a>
         </li>
         <li class="sidebar-item">
-            <a href="#" class="sidebar-link d-flex align-items-center gap-2">
+            <a href="#" class="sidebar-link d-flex align-items-center gap-2" (click)="logout()">
                 <icon [name]="'logout'"></icon>
                 Sair
             </a>

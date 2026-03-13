@@ -2,6 +2,7 @@ import { Component, EventEmitter, inject, Input, Output, ViewChild } from '@angu
 import { Login } from '../../models/Login';
 import { CryptoService } from '../../services/crypto-service';
 import { LoginActionsService } from '../../services/Login-actions-service/login-actions-service';
+import { LoginService } from '../../services/login-service/login.service';
 import { IconComponent } from '../icon/icon.component';
 import { LoginFormComponent } from "../login-form/login-form.component";
 import { ModalComponent } from '../modal/modal.component';
@@ -16,11 +17,14 @@ import { AlertComponent } from '../alert/alert.component';
 })
 export class LoginCardComponent {
   cryptoService = inject(CryptoService);
-  loginActionsService = inject(LoginActionsService)
+  loginActionsService = inject(LoginActionsService);
+  loginService = inject(LoginService);
+
   @Input() login!: Login;
-  @Output() saveEdition = new EventEmitter<void>();
-  decryptedPassword: string = "cu";
-  showToast: boolean = false
+  @Output() onDelete = new EventEmitter<void>();
+  @Output() onEdit = new EventEmitter<void>();
+
+  decryptedPassword: string = '';
   showPass: boolean = false;
   showModalEditLogin: boolean = false;
   showModalDeleteLogin: boolean = false;
@@ -28,19 +32,22 @@ export class LoginCardComponent {
 
   @ViewChild('alertExclusion') alertExclusion!: AlertComponent;
   @ViewChild('alertEdition') alertEdition!: AlertComponent;
-  async ngOnInit() {
+
+  async ngOnInit(): Promise<void> {
     this.decryptedPassword = await this.cryptoService.decrypt(this.login.password);
   }
 
-  delete() {
+  async delete(): Promise<void> {
+    await this.loginService.delete(this.login.id);
     this.showModalDeleteLogin = false;
     this.alertExclusion.show();
+    this.onDelete.emit(); // notifica o pai para recarregar a lista
   }
 
-
-  edit() {
+  async edit(updatedLogin: Omit<Login, 'id'>): Promise<void> {
+    await this.loginService.update(this.login.id, updatedLogin);
+    this.showModalEditLogin = false;
     this.alertEdition.show();
+    this.onEdit.emit();
   }
-
-
 }
