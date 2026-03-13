@@ -1,4 +1,7 @@
-
+@if(showProgressBar){
+  <app-progress-bar/>
+}@else {
+  
    <button class="btn btn-primary m-3" (click)="showModalCreateLogin=true">
     <icon [name]="'new'" fillColor="#FFFFFF"/>
     Novo
@@ -25,6 +28,7 @@
         (onEdit)="loadLogins()">
     </login-card>
 }
+</div>
 
 @if (showModalConfimExclusion) {
 <modal [title]="'Confirme exclusão'" [message]="'Deseja realmente excluir o relato selecionado?'"
@@ -43,6 +47,5 @@
     type="success"
     [duration]="4000"
     vertical="center"
-    horizontal="center"
-/>
-
+    horizontal="center"/>
+}

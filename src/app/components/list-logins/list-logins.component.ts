@@ -9,11 +9,12 @@ import { LoginFormComponent } from '../login-form/login-form.component';
 import { AlertComponent } from '../alert/alert.component';
 import { LoginService } from '../../services/login-service/login.service';
 import { AuthService } from '../../services/auth-service/auth.service';
+import { ProgressBarComponent } from '../progress-bar/progress-bar.component';
 
 @Component({
   selector: 'app-list-logins',
   standalone: true,
-  imports: [ModalComponent, LoginCardComponent, HeaderComponent, IconComponent, LoginFormComponent, AlertComponent],
+  imports: [ModalComponent, LoginCardComponent, ProgressBarComponent, IconComponent, LoginFormComponent, AlertComponent],
   templateUrl: './list-logins.component.html',
   styleUrl: './list-logins.component.css'
 })
@@ -23,6 +24,7 @@ export class ListLoginsComponent {
   auth = inject(AuthService);
   showModalCreateLogin: boolean = false;
   showModalConfimExclusion: boolean = false;
+  showProgressBar: boolean = true;
 
   @ViewChild('alertCreation') alertCreation!: AlertComponent;
 
@@ -36,6 +38,7 @@ export class ListLoginsComponent {
   async loadLogins(): Promise<void> {
     this.loginsList = await this.loginService.getAll();
     this.loginsListToShow = this.loginsList;
+    this.showProgressBar = false;
   }
 
   getLoginByPlataformName(searchTerm: string): void {
