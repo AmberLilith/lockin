@@ -1,11 +1,10 @@
 <form [formGroup]="registerFormGroup" class="d-grid gap-2">
     @if(errorMessage){
-        <div class="alert alert-danger py-2">{{ errorMessage }}</div>
+    <div class="alert alert-danger py-2">{{ errorMessage }}</div>
     }
 
     <div class="form-floating">
-        <input type="email" class="form-control" placeholder="Email"
-            formControlName="email"
+        <input type="email" class="form-control" placeholder="Email" formControlName="email"
             [class.is-invalid]="email?.invalid && email?.touched">
         <label>Email</label>
         <div class="invalid-feedback">Email inválido</div>
@@ -13,9 +12,8 @@
 
     <div class="input-group">
         <div class="form-floating">
-            <input [type]="showPass ? 'text' : 'password'" class="form-control"
-                placeholder="Senha" formControlName="password"
-                [class.is-invalid]="password?.invalid && password?.touched">
+            <input [type]="showPass ? 'text' : 'password'" class="form-control" placeholder="Senha"
+                formControlName="password" [class.is-invalid]="password?.invalid && password?.touched">
             <label>Senha</label>
         </div>
         <button class="btn btn-outline-secondary" type="button" (click)="showPass=!showPass">
@@ -23,13 +21,12 @@
         </button>
     </div>
     @if(password?.invalid && password?.touched){
-        <div class="text-danger small">Mínimo 6 caracteres</div>
+    <div class="text-danger small">Mínimo 6 caracteres</div>
     }
 
     <div class="form-floating">
-        <input [type]="showPass ? 'text' : 'password'" class="form-control"
-            placeholder="Confirmar senha" formControlName="confirmPassword"
-            [class.is-invalid]="passwordMismatch">
+        <input [type]="showPass ? 'text' : 'password'" class="form-control" placeholder="Confirmar senha"
+            formControlName="confirmPassword" [class.is-invalid]="passwordMismatch">
         <label>Confirmar senha</label>
         <div class="invalid-feedback">As senhas não coincidem</div>
     </div>
@@ -41,3 +38,8 @@
         Cancelar
     </button>
 </form>
+
+<app-alert #alertWait [message]="'Aguarde...'" [type]="'info'" [autoDismiss]="false" [vertical]="'center'" [horizontal]="'center'" [allowClosing]="false">
+    <div class="spinner-border text-primary" role="status" alert-content>
+    </div>
+</app-alert>

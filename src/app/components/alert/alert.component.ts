@@ -17,6 +17,7 @@ export class AlertComponent implements OnDestroy {
   @Input() type: AlertType = 'success';
   @Input() duration: number = 3000;
   @Input() autoDismiss: boolean = true;
+  @Input() allowClosing: boolean = true;
   @Input() vertical: AlertVertical = 'center';
   @Input() horizontal: AlertHorizontal = 'center';
 
@@ -53,3 +54,5 @@ export class AlertComponent implements OnDestroy {
     clearTimeout(this.timer);
   }
 }
+
+/* Como usar: */

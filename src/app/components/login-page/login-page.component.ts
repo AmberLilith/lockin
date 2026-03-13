@@ -4,6 +4,7 @@ import { AuthService } from '../../services/auth-service/auth.service';
 import { IconComponent } from '../icon/icon.component';
 import { RegisterComponent } from '../register/register.component';
 import { ModalComponent } from '../modal/modal.component';
+import { AlertComponent } from '../alert/alert.component';
 
 @Component({
   selector: 'app-login-page',
@@ -14,7 +15,7 @@ import { ModalComponent } from '../modal/modal.component';
 })
 export class LoginPageComponent {
   authService = inject(AuthService);
-  showPass: boolean = false;
+  showPass: boolean = false; 
   errorMessage: string = '';
   showModalRegister: boolean = false;
 
