@@ -1,7 +1,7 @@
 <form [formGroup]="loginFormGroup">
     <div class="d-grid gap-1">
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" placeholder="Nome Plataforma" formControlName="plataformName"
+            <input type="text" class="form-control text-capitalize" placeholder="Nome Plataforma" formControlName="plataformName"
                 [class.is-invalid]="plataformName?.invalid && plataformName?.touched">
             <label>Nome Plataforma:</label>
             <div class="invalid-feedback">
@@ -34,7 +34,7 @@
                 <icon [name]="'settings'"></icon>
             </button>
             <button class="btn btn-outline-secondary" type="button"
-                (click)="loginActionsService.copyPassword(this.login.password)">
+                (click)="loginActionsService.copyInputPasswordValue(inputPassword.value)">
                 <icon [name]="'copy'"></icon>
             </button>
             <button class="btn btn-outline-secondary" type="button"
@@ -48,7 +48,7 @@
         <div class="mb-3">
             <div class="form-floating">
                 <input #inputRepeatPassword type="{{showPass ? 'text' : 'password'}}" class="form-control"
-                    placeholder="Digite novamente a senha">
+                    placeholder="Digite novamente a senha" [value]="decryptedPassword">
                 <label for="inputRepeatPassword">Confirmação Senha:</label>
                 @if(inputPassword.value != inputRepeatPassword.value) {
                 <div style="color: rgb(167, 11, 11);">
@@ -58,7 +58,7 @@
             </div>
         </div>
 
-        <button type="button" class="btn btn-primary">Salvar</button>
+        <button type="button" class="btn btn-primary" (click)="save()">Salvar</button>
 
         <button type="button" class="btn btn-danger" (click)="handleCancel()">Cancelar</button>
     </div>
@@ -70,3 +70,6 @@
         modal-body></generate-password>
 </modal>
 }
+
+
+

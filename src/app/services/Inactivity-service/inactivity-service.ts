@@ -1,36 +1,36 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { Auth, signOut } from '@angular/fire/auth';
+import { Router } from '@angular/router';
+import { NotificationService } from '../notification-service/notification.service';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class InactivityServiceService {
+@Injectable({ providedIn: 'root' })
+export class InactivityService {
+  private auth = inject(Auth);
+  private router = inject(Router);
+  private notificationService = inject(NotificationService);
 
   private timer: any;
-  private readonly TIMEOUT = 5 * 60 * 1000; // 5 minutos
+  private readonly TIMEOUT = 5 * 60 * 1000;
+  private isLocked: boolean = false;
 
   reset(): void {
+    if (!this.auth.currentUser) return; // ← só monitora se estiver logado
+    if (this.isLocked) return;
+
     clearTimeout(this.timer);
     this.timer = setTimeout(() => this.lock(), this.TIMEOUT);
   }
 
-  private lock(): void {
-    //this.router.navigate(['/login']); // TODO Descomentar após rotas estiverem prontas
+  start(): void {
+    this.isLocked = false;
+    this.reset();
+  }
+
+  private async lock(): Promise<void> {
+    this.isLocked = true;
+    clearTimeout(this.timer);
+    await signOut(this.auth);
+    this.notificationService.show('Sessão encerrada por inatividade', 'warning');
+    this.router.navigate(['/login']);
   }
 }
-
-/* O reset() precisa ser chamado a cada interação do usuário. A melhor forma é no AppComponent ouvindo os eventos do mouse e teclado:
-typescript@Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-})
-export class AppComponent {
-  inactivityService = inject(InactivityService);
-
-  @HostListener('mousemove')
-  @HostListener('keydown')
-  @HostListener('click')
-  @HostListener('touchstart')
-  onUserActivity(): void {
-    this.inactivityService.reset();
-  }
-} */

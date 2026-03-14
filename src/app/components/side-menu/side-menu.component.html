@@ -1,0 +1,22 @@
+@if(isOpen){
+<div class="sidebar-overlay" (click)="close()"></div>
+}
+
+<div class="sidebar" [class.sidebar-open]="isOpen">
+    <div class="sidebar-header d-flex justify-content-between align-items-center p-3">
+        <span class="fw-bold fs-5">Menu</span>
+        <button class="btn btn-sm btn-outline-secondary" (click)="close()">
+            <icon [name]="'close'"></icon>
+        </button>
+    </div>
+
+    <ul class="sidebar-menu list-unstyled p-3">
+        
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link d-flex align-items-center gap-2" (click)="logout()">
+                <icon [name]="'logout'"></icon>
+                Sair
+            </a>
+        </li>
+    </ul>
+</div>

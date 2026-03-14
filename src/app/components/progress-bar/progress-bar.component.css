@@ -1,0 +1,19 @@
+.progress-bar {
+    width: 0%;
+    /* Define a largura inicial como 0% */
+    animation: progressAnimation 3s linear infinite;
+    /* Aplica a animação */
+}
+
+@keyframes progressAnimation {
+    0% {
+        width: 0%;
+    }
+
+    /* Começa com largura 0% */
+    100% {
+        width: 100%;
+    }
+
+    /* Termina com largura 100% */
+}

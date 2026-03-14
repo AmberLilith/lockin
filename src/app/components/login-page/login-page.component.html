@@ -1,0 +1,56 @@
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center">
+    <div class="card shadow p-4" style="width: 100%; max-width: 400px;">
+        <h4 class="text-center mb-4">🔐 Identifique-se</h4>
+
+        @if(errorMessage){
+        <div class="alert alert-danger py-2">{{ errorMessage }}</div>
+        }
+
+        <form [formGroup]="loginFormGroup">
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control" placeholder="Email" formControlName="email"
+                    [class.is-invalid]="email?.invalid && email?.touched">
+                <label>Email</label>
+                <div class="invalid-feedback">Email inválido</div>
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="form-floating">
+                    <input [type]="showPass ? 'text' : 'password'" class="form-control" placeholder="Senha"
+                        formControlName="password" [class.is-invalid]="password?.invalid && password?.touched">
+                    <label>Senha</label>
+                </div>
+                <button class="btn btn-outline-secondary" type="button" (click)="showPass = !showPass">
+                    <icon [name]="showPass ? 'visibility-off' : 'visibility'"></icon>
+                </button>
+            </div>
+            @if(password?.invalid && password?.touched){
+            <div class="text-danger small mb-2">Senha obrigatória</div>
+            }
+
+            <div class="text-center mt-2">
+                <small>Não tem conta? <a href="javascript:void(0)" (click)="showModalRegister=true">Criar conta</a></small>
+            </div>
+
+            <button class="btn btn-primary w-100 mb-2" type="button" (click)="loginWithEmail()">
+                Entrar
+            </button>
+
+            <hr class="my-3">
+
+            <button class="btn btn-outline-secondary w-100" type="button" (click)="loginWithGoogle()">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" class="me-2">
+                Entrar com Google
+            </button>
+        </form>
+    </div>
+</div>
+
+@if(showModalRegister){
+    <modal [showFooter]="false" [title]="'Criar conta'" (onCancel)="showModalRegister=false">
+        <app-register 
+            modal-body
+            (onSuccess)="onRegisterSuccess($event)"
+            (onCancel)="showModalRegister=false"/>
+    </modal>
+}

@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, inject, Input, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Login } from '../../models/Login';
 import { CryptoService } from '../../services/crypto-service';
 import { LoginActionsService } from '../../services/Login-actions-service/login-actions-service';
@@ -14,59 +14,68 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
   templateUrl: './login-form.component.html',
   styleUrl: './login-form.component.css'
 })
-export class LoginFormComponent {
+export class LoginFormComponent implements OnInit {
   loginActionsService = inject(LoginActionsService);
   cryptoService = inject(CryptoService);
-  @Input() login!: Login
-  loginFormGroup!: FormGroup
+
+  @Input() login!: Login;
+  @Output() onOk = new EventEmitter<Omit<Login, 'id'>>();
+  @Output() onCancel = new EventEmitter<void>();
+
   showPass: boolean = false;
   showModalGenPass: boolean = false;
-  decryptedPassword: string = "";
-  displayPassword: string = "";
+  decryptedPassword: string = '';
 
-  @Output() onOk = new EventEmitter<any>();
-    @Output() onCancel = new EventEmitter<void>();
+  @ViewChild('inputPassword') inputPassword!: ElementRef<HTMLInputElement>;
+  @ViewChild('inputRepeatPassword') inputRepeatPassword!: ElementRef<HTMLInputElement>;
 
-  @ViewChild("inputPassword") inputPassword!: ElementRef<HTMLInputElement>;
-  @ViewChild("inputRepeatPassword") inputRepeatPassword!: ElementRef<HTMLInputElement>;
+  loginFormGroup = new FormGroup({
+    plataformName: new FormControl('', Validators.required),
+    user: new FormControl('', Validators.required),
+    password: new FormControl('', Validators.required)
+  });
 
-  constructor(){
-    this.loginFormGroup = new FormGroup({
-      plataformName: new FormControl("",Validators.required),
-      user: new FormControl("", Validators.required),
-      password: new FormControl("", [Validators.required])
-    })
+  get plataformName() { return this.loginFormGroup.get('plataformName'); }
+  get user() { return this.loginFormGroup.get('user'); }
+  get password() { return this.loginFormGroup.get('password'); }
+
+  get isEditing(): boolean { return !!this.login; }
+
+  async ngOnInit(): Promise<void> {
+    if (this.isEditing) {
+      this.decryptedPassword = await this.cryptoService.decrypt(this.login.password);
+      this.loginFormGroup.patchValue({
+        plataformName: this.login.plataformName,
+        user: this.login.user,
+        password: this.decryptedPassword
+      });
+    }
   }
 
-  get plataformName() {
-  return this.loginFormGroup.get('plataformName');
-}
-
-get user(){
-  return this.loginFormGroup.get('user');
-}
-
-get password() {
-  return this.loginFormGroup.get('password');
-}
-
-  getGeneratedPassword(value: string): void{
+  getGeneratedPassword(value: string): void {
     this.inputPassword.nativeElement.value = value;
     this.inputRepeatPassword.nativeElement.value = value;
-  }  
-  
-    handleOk() {
-      this.onOk.emit();
-      this.onCancel.emit();
-    }
-  
-    handleCancel() {
-      this.onCancel.emit();
+    this.loginFormGroup.patchValue({ password: value });
+  }
+
+  save(): void {
+    if (this.loginFormGroup.invalid) {
+      this.loginFormGroup.markAllAsTouched();
+      return;
     }
 
-  async ngOnInit(){
-    if(this.login){
-      this.decryptedPassword = await this.cryptoService.decrypt(this.login.password);
+    if (this.inputPassword.nativeElement.value !== this.inputRepeatPassword.nativeElement.value) {
+      return;
     }
+
+    this.onOk.emit({
+      plataformName: this.plataformName?.value!,
+      user: this.user?.value!,
+      password: this.inputPassword.nativeElement.value
+    });
+  }
+
+  handleCancel(): void {
+    this.onCancel.emit();
   }
 }

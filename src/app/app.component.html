@@ -1,2 +1,12 @@
-<app-list-logins></app-list-logins>
+<div class="container">
+<app-header />
 <router-outlet></router-outlet>
+<app-alert #globalAlert
+    [message]="alertMessage"
+    [type]="alertType"
+    [autoDismiss]="false"
+    vertical="top"
+    horizontal="center"
+/>
+</div>
+
