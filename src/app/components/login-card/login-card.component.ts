@@ -28,12 +28,15 @@ export class LoginCardComponent {
   showPass: boolean = false;
   showModalEditLogin: boolean = false;
   showModalDeleteLogin: boolean = false;
-  displayPassword: string = '';
 
   @ViewChild('alertExclusion') alertExclusion!: AlertComponent;
   @ViewChild('alertEdition') alertEdition!: AlertComponent;
 
   async ngOnInit(): Promise<void> {
+    this.decryptedPassword = await this.cryptoService.decrypt(this.login.password);
+  }
+
+  async ngOnChanges(){
     this.decryptedPassword = await this.cryptoService.decrypt(this.login.password);
   }
 
