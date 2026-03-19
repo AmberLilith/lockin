@@ -4,16 +4,24 @@
         <icon [name]="'menu'"></icon>
     </button>
 
-    <span class="navbar-brand mx-auto">Lockin</span>
+    <span class="navbar-brand mx-auto">Lockin</span>@if(showInstallButton){
+        <button class="btn" (click)="installPWA()" matTooltip="Instalar Aplicativo">
+            <icon [name]="'download_for_offline'"></icon>
+        </button>
+        }
 
-    <div class="form-check form-switch mb-0">
+    <div>
+        <label for="">Tema</label>   
+        <div class="form-check form-switch mb-0"> 
+                
         <input class="form-check-input" type="checkbox" role="switch" id="themeSwitch"
             [checked]="themeService.isDarkMode()" (change)="themeService.toggle()">
-        <label class="form-check-label" for="themeSwitch">
-            <icon [name]="themeService.isDarkMode() ? 'bedtime' : 'bedtime-off'"/>
+        
+    </div>
+    <label class="form-check-label" for="themeSwitch">
+            {{themeService.isDarkMode() ? 'Dark' : 'Light'}}
         </label>
     </div>
 </nav>
 
 <side-menu [(isOpen)]="sidebarOpen" />
-
