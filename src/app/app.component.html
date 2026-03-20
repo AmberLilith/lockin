@@ -10,3 +10,12 @@
 />
 </div>
 
+@if(showModalUpdate){
+    <modal 
+    [message]="'Uma nova versão do Diário está disponível.\n deseja instalar?'"
+    [title]="'Atualização'"
+    btnOkText="'Atualizar'"
+    (onOk)="pwaService.update()"
+    (onCancel)="showModalUpdate = false"/>
+}
+
