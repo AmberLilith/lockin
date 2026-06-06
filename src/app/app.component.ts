@@ -32,8 +32,17 @@ export class AppComponent {
       this.alertType = notification.type;
       setTimeout(() => this.globalAlert.show());
     });
+
+    this.notificationService.onDismiss$.subscribe(() => {
+    if (this.globalAlert) {
+      this.globalAlert.dismiss();
+    }
+  });
+  
     this.pwaService.verifyUpdate(() =>{this.showModalUpdate = true});
   }
+
+  
 
   @HostListener('mousemove')
   @HostListener('keydown')

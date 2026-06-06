@@ -7,8 +7,22 @@ import { filter } from 'rxjs';
 })
 export class PwaService {
   private swUpdate = inject(SwUpdate);
+  deferredPrompt: any;
 
   constructor() { }
+
+  installPWA(callback: ()=> void) {
+    callback();
+    // Dispara o prompt guardado
+    this.deferredPrompt.prompt();
+    // Verifica a escolha do usuário
+    this.deferredPrompt.userChoice.then((choiceResult: { outcome: string }) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('Usuário aceitou a instalação');
+      }
+      this.deferredPrompt = null;
+    });
+  }
 
   verifyUpdate(callback: () => void) {
     // 1. Verifica se o Service Worker está ativo

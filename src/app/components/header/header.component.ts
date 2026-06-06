@@ -1,4 +1,5 @@
 import { Component, HostListener, inject } from '@angular/core';
+import { PwaService } from '../../services/pwa-service/pwa.service';
 import { ThemeService } from '../../services/theme-service/theme-service.service';
 import { IconComponent } from '../icon/icon.component';
 import { SideMenuComponent } from '../side-menu/side-menu.component';
@@ -12,6 +13,7 @@ import { SideMenuComponent } from '../side-menu/side-menu.component';
 })
 export class HeaderComponent {
   themeService = inject(ThemeService);
+  pwaService = inject(PwaService);
   sidebarOpen: boolean = false;
   deferredPrompt: any;
   showInstallButton = false;
@@ -26,16 +28,8 @@ export class HeaderComponent {
     this.showInstallButton = true;
   }
 
-  installPWA() {
-    this.showInstallButton = false;
-    // Dispara o prompt guardado
-    this.deferredPrompt.prompt();
-    // Verifica a escolha do usuário
-    this.deferredPrompt.userChoice.then((choiceResult: { outcome: string }) => {
-      if (choiceResult.outcome === 'accepted') {
-        console.log('Usuário aceitou a instalação');
-      }
-      this.deferredPrompt = null;
-    });
+  installPWA(){
+    this.pwaService.installPWA(() =>{this.showInstallButton = false});
   }
+  
 }

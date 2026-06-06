@@ -42,7 +42,24 @@ async function encryptFirebaseLogins(data, secretKey) {
   return result;
 }
 
-// Cole seu JSON aqui
+/*Cole seu JSON aqui
+formato esperado:
+{
+  "reports": {
+    "-NwHqIiDPLl7a6yfYT95": {
+      "date": "22/09/2023",
+      "hour": "19:47:00",
+      "id": "-NwHqIiDPLl7a6yfYT95",
+      "report": "ffsdj342@$@235usdflk@#$"
+    },
+    "-NwHqKbRmz8hV0BoNUYb": {
+      "date": "22/09/2023",
+      "hour": "22:37:00",
+      "id": "-NwHqKbRmz8hV0BoNUYb",
+      "report": "ffsdj342@$@235usdflk@#$"
+    }
+    */
+
 const data = { SEU JSON AQUI };
 
 encryptFirebaseLogins(data, 'sua-chave-secreta-32-caracteres!!').then(result => {
@@ -51,7 +68,6 @@ encryptFirebaseLogins(data, 'sua-chave-secreta-32-caracteres!!').then(result => 
 ```
 
 ## Descriptografar
-
 ```
 async function decryptFirebaseLogins(data, secretKey) {
   const keyMaterial = new TextEncoder().encode(secretKey.padEnd(32).slice(0, 32));

@@ -12,9 +12,9 @@
 
 @if(showModalUpdate){
     <modal 
-    [message]="'Uma nova versão do Diário está disponível.\n deseja instalar?'"
+    [message]="'Uma nova versão de Lockin está disponível.\n deseja instalar?'"
     [title]="'Atualização'"
-    btnOkText="'Atualizar'"
+    btnOkText="Atualizar"
     (onOk)="pwaService.update()"
     (onCancel)="showModalUpdate = false"/>
 }
