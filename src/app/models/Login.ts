@@ -3,6 +3,7 @@ export class Login{
     plataformName: string
     password: string
     user: string
+    cryptoVersion?: number
 
     constructor(id: string, plataformName: string, password: string, user: string){
         this.id = id
