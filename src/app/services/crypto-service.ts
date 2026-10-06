@@ -20,7 +20,6 @@ export class CryptoService {
 
   // Criptografa — retorna string base64 (iv + dados cifrados)
   async encrypt(plainText: string): Promise<string> {
-    console.log(plainText)
     const key = await this.getKey();
     const iv = crypto.getRandomValues(new Uint8Array(12)); // 96-bit IV (recomendado para GCM)
     const encoded = new TextEncoder().encode(plainText);
