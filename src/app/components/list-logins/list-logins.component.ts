@@ -31,6 +31,7 @@ export class ListLoginsComponent implements OnInit, OnDestroy {
   private loginSubscription?: Subscription;
   loginsList: Login[] = [];
   loginsListToShow: Login[] = [];
+  searchTerm: string = '';
 
   @ViewChild('alertCreation') alertCreation!: AlertComponent;
 
@@ -39,7 +40,7 @@ export class ListLoginsComponent implements OnInit, OnDestroy {
     this.loginSubscription = this.loginService.getAll().subscribe({
       next: (logins) => {
         this.loginsList = logins || [];
-        this.loginsListToShow = this.loginsList;
+        this.applyFilter();
         this.showProgressBar = false;
       },
       error: () => this.showProgressBar = false
@@ -47,7 +48,13 @@ export class ListLoginsComponent implements OnInit, OnDestroy {
   }
 
   getLoginByPlataformName(searchTerm: string): void {
-    const term = searchTerm.trim().toLowerCase();
+    this.searchTerm = searchTerm;
+    this.applyFilter();
+  }
+
+  private applyFilter(): void {
+    const term = this.searchTerm.trim().toLowerCase();
+
     this.loginsListToShow = !term
       ? this.loginsList
       : this.loginsList.filter(login =>
