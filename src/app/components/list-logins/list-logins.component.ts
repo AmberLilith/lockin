@@ -39,6 +39,7 @@ export class ListLoginsComponent implements OnInit, OnDestroy {
   unlockErrorMessage: string = '';
   cryptoConfig: CryptoConfig | null = null;
   vaultUnlocked: boolean = false;
+  passwordChangedSuccess: boolean = false;
   
   private loginSubscription?: Subscription;
   loginsList: Login[] = [];
@@ -83,6 +84,7 @@ export class ListLoginsComponent implements OnInit, OnDestroy {
     }
 
     this.unlockErrorMessage = '';
+    this.passwordChangedSuccess = false;
 
     try {
       await this.vaultCryptoService.unlockVault(masterPassword, this.cryptoConfig);
@@ -91,6 +93,12 @@ export class ListLoginsComponent implements OnInit, OnDestroy {
     } catch {
       this.unlockErrorMessage = 'Senha mestra incorreta.';
     }
+  }
+
+  closeUnlockVaultModal(): void {
+    this.showModalUnlockVault = false;
+    this.passwordChangedSuccess = false;
+    this.unlockErrorMessage = '';
   }
 
   async changeMasterPassword(change: MasterPasswordChange): Promise<void> {
@@ -111,7 +119,7 @@ export class ListLoginsComponent implements OnInit, OnDestroy {
 
       this.cryptoConfig = newConfig;
       this.vaultUnlocked = true;
-      this.showModalUnlockVault = false;
+      this.passwordChangedSuccess = true;
     } catch {
       this.vaultCryptoService.lockVault();
       this.unlockErrorMessage = 'Não foi possível alterar a senha mestra. Confira a senha atual.';
