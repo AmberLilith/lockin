@@ -14,11 +14,13 @@ import { CommonModule } from '@angular/common'; // Importante para o pipe async
 import { MasterPasswordSetupComponent } from '../master-password-setup/master-password-setup.component';
 import { VaultConfigService } from '../../services/vault-config-service/vault-config.service';
 import { VaultCryptoService } from '../../services/vault-crypto-service/vault-crypto.service';
+import { MasterPasswordUnlockComponent } from '../master-password-unlock/master-password-unlock.component';
+import { CryptoConfig } from '../../models/CryptoConfig';
 
 @Component({
   selector: 'app-list-logins',
   standalone: true,
-  imports: [CommonModule, ModalComponent, LoginCardComponent, ProgressBarComponent, IconComponent, LoginFormComponent, AlertComponent, MasterPasswordSetupComponent],
+  imports: [CommonModule, ModalComponent, LoginCardComponent, ProgressBarComponent, IconComponent, LoginFormComponent, AlertComponent, MasterPasswordSetupComponent, MasterPasswordUnlockComponent],
   templateUrl: './list-logins.component.html',
   styleUrl: './list-logins.component.css'
 })
@@ -33,6 +35,9 @@ export class ListLoginsComponent implements OnInit, OnDestroy {
   showModalConfimExclusion: boolean = false;
   showProgressBar: boolean = true;
   showModalMasterPassword: boolean = false;
+  showModalUnlockVault: boolean = false;
+  unlockErrorMessage: string = '';
+  cryptoConfig: CryptoConfig | null = null;
   
   private loginSubscription?: Subscription;
   loginsList: Login[] = [];
@@ -52,14 +57,37 @@ export class ListLoginsComponent implements OnInit, OnDestroy {
       error: () => this.showProgressBar = false
     });
 
-    const cryptoConfig = await this.vaultConfigService.get();
-    this.showModalMasterPassword = !cryptoConfig;
+    this.cryptoConfig = await this.vaultConfigService.get();
+
+    if (!this.cryptoConfig) {
+      this.showModalMasterPassword = true;
+    } else if (!this.vaultCryptoService.isVaultUnlocked()) {
+      this.showModalUnlockVault = true;
+    }
   }
 
   async setupMasterPassword(masterPassword: string): Promise<void> {
     const config = await this.vaultCryptoService.createCryptoConfig(masterPassword);
     await this.vaultConfigService.save(config);
+    await this.vaultCryptoService.unlockVault(masterPassword, config);
+
+    this.cryptoConfig = config;
     this.showModalMasterPassword = false;
+  }
+
+  async unlockVault(masterPassword: string): Promise<void> {
+    if (!this.cryptoConfig) {
+      return;
+    }
+
+    this.unlockErrorMessage = '';
+
+    try {
+      await this.vaultCryptoService.unlockVault(masterPassword, this.cryptoConfig);
+      this.showModalUnlockVault = false;
+    } catch {
+      this.unlockErrorMessage = 'Senha mestra incorreta.';
+    }
   }
 
   getLoginByPlataformName(searchTerm: string): void {
