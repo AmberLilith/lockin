@@ -21,7 +21,14 @@ export class VaultConfigService {
   }
 
   async save(config: CryptoConfig): Promise<void> {
-    await set(ref(this.db, this.getConfigPath()), config);
+    const configRef = ref(this.db, this.getConfigPath());
+    const snapshot = await get(configRef);
+
+    if (snapshot.exists()) {
+      throw new Error('Configuração criptográfica já existe e não pode ser sobrescrita.');
+    }
+
+    await set(configRef, config);
   }
 
   async get(): Promise<CryptoConfig | null> {
