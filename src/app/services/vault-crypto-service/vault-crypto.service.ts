@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { CryptoConfig } from '../../models/CryptoConfig';
 
 @Injectable({
   providedIn: 'root'
@@ -42,6 +43,52 @@ export class VaultCryptoService {
       },
       false,
       ['encrypt', 'decrypt']
+    );
+  }
+
+  async createCryptoConfig(masterPassword: string): Promise<CryptoConfig> {
+    const salt = this.generateSalt();
+    const vaultKey = this.generateVaultKey();
+    const masterKey = await this.deriveMasterKey(masterPassword, salt);
+
+    const { encryptedVaultKey, iv } = await this.encryptVaultKey(
+      vaultKey,
+      masterKey
+    );
+
+    return {
+      version: 2,
+      kdf: this.KDF,
+      iterations: this.PBKDF2_ITERATIONS,
+      salt: this.bytesToBase64(salt),
+      iv,
+      encryptedVaultKey
+    };
+  }
+
+  async unlockVaultKey(
+    masterPassword: string,
+    config: CryptoConfig
+  ): Promise<Uint8Array> {
+    if (config.version !== 2) {
+      throw new Error(`Versão de configuração criptográfica não suportada: ${config.version}`);
+    }
+
+    if (config.kdf !== this.KDF) {
+      throw new Error(`KDF não suportado: ${config.kdf}`);
+    }
+
+    const salt = this.base64ToBytes(config.salt);
+    const masterKey = await this.deriveMasterKey(
+      masterPassword,
+      salt,
+      config.iterations
+    );
+
+    return this.decryptVaultKey(
+      config.encryptedVaultKey,
+      config.iv,
+      masterKey
     );
   }
 

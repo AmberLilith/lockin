@@ -29,4 +29,23 @@ describe('VaultCryptoService', () => {
 
     expect(Array.from(recoveredVaultKey)).toEqual(Array.from(originalVaultKey));
   });
+
+  it('deve criar CryptoConfig e desbloquear a vaultKey com a mesma senha mestra', async () => {
+    const masterPassword = 'outra-senha-mestra-de-teste';
+
+    const config = await service.createCryptoConfig(masterPassword);
+    const recoveredVaultKey = await service.unlockVaultKey(
+      masterPassword,
+      config
+    );
+
+    expect(config.version).toBe(2);
+    expect(config.kdf).toBe('PBKDF2');
+    expect(config.iterations).toBe(service.PBKDF2_ITERATIONS);
+    expect(config.salt).toBeTruthy();
+    expect(config.iv).toBeTruthy();
+    expect(config.encryptedVaultKey).toBeTruthy();
+    expect(recoveredVaultKey.length).toBe(32);
+  });
+
 });
