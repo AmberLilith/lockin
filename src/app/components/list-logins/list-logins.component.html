@@ -47,6 +47,18 @@
     </modal>
   }
 
+  @if(showModalUnlockVault){
+    <modal
+      [showFooter]="false"
+      (onCancel)="showModalUnlockVault=false"
+      [title]="'Desbloquear cofre'">
+      <app-master-password-unlock
+        modal-body
+        [errorMessage]="unlockErrorMessage"
+        (onConfirm)="unlockVault($event)"/>
+    </modal>
+  }
+
   @if(showModalCreateLogin){
     <modal [showFooter]="false" (onCancel)="showModalCreateLogin=false" [title]="'Criar Login'">
       <login-form modal-body (onCancel)="showModalCreateLogin=false" (onOk)="save($event)"/>
