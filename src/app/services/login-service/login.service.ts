@@ -45,12 +45,16 @@ export class LoginService {
 
   async update(id: string, login: Partial<Login>): Promise<void> {
     if (login.password) {
-      login.password = await this.cryptoService.encrypt(
+      const vaultKey = this.vaultCryptoService.getActiveVaultKey();
+
+      login.password = await this.vaultCryptoService.encryptWithVaultKey(
         login.password,
-        this.cryptoService.CURRENT_VERSION
+        vaultKey
       );
-      login.cryptoVersion = this.cryptoService.CURRENT_VERSION;
+
+      login.cryptoVersion = 2;
     }
+
     await update(ref(this.db, `${this.getBasePath()}/${id}`), login);
   }
 
