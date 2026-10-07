@@ -39,6 +39,10 @@ export class ListLoginsComponent implements OnInit, OnDestroy {
   unlockErrorMessage: string = '';
   cryptoConfig: CryptoConfig | null = null;
   vaultUnlocked: boolean = false;
+  showModalConfirmMigration: boolean = false;
+  migrationRunning: boolean = false;
+  migrationMessage: string = '';
+  migrationError: string = '';
   
   private loginSubscription?: Subscription;
   loginsList: Login[] = [];
@@ -90,6 +94,30 @@ export class ListLoginsComponent implements OnInit, OnDestroy {
       this.showModalUnlockVault = false;
     } catch {
       this.unlockErrorMessage = 'Senha mestra incorreta.';
+    }
+  }
+
+  async migrateEncryption(): Promise<void> {
+    if (!this.vaultUnlocked || this.migrationRunning) {
+      return;
+    }
+
+    this.migrationRunning = true;
+    this.migrationMessage = '';
+    this.migrationError = '';
+    this.showModalConfirmMigration = false;
+
+    try {
+      const result = await this.loginService.migrateV1ToV2();
+
+      this.migrationMessage =
+        `Migração concluída. Total: ${result.total}, migrados: ${result.migrated}, já em v2: ${result.skipped}.`;
+    } catch (error) {
+      this.migrationError = error instanceof Error
+        ? error.message
+        : 'Falha desconhecida durante a migração.';
+    } finally {
+      this.migrationRunning = false;
     }
   }
 
