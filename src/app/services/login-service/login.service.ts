@@ -4,12 +4,14 @@ import { AuthService } from '../auth-service/auth.service';
 import { Login } from '../../models/Login';
 import { CryptoService } from '../crypto-service';
 import { Observable } from 'rxjs';
+import { VaultCryptoService } from '../vault-crypto-service/vault-crypto.service';
 
 @Injectable({ providedIn: 'root' })
 export class LoginService {
   private db = inject(Database);
   private authService = inject(AuthService);
   private cryptoService = inject(CryptoService);
+  private vaultCryptoService = inject(VaultCryptoService);
 
   private getBasePath(): string {
     const uid = this.authService.getCurrentUser()?.uid;
@@ -25,16 +27,19 @@ export class LoginService {
 
   async create(login: Omit<Login, 'id'>): Promise<void> {
     const newId = crypto.randomUUID();
-    const encryptedPassword = await this.cryptoService.encrypt(
+    const vaultKey = this.vaultCryptoService.getActiveVaultKey();
+    const encryptedPassword = await this.vaultCryptoService.encryptWithVaultKey(
       login.password,
-      this.cryptoService.CURRENT_VERSION
+      vaultKey
     );
+
     const newLogin: Login = {
       ...login,
       id: newId,
       password: encryptedPassword,
-      cryptoVersion: this.cryptoService.CURRENT_VERSION
+      cryptoVersion: 2
     };
+
     await set(ref(this.db, `${this.getBasePath()}/${newId}`), newLogin);
   }
 
