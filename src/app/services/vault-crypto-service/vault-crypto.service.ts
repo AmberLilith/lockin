@@ -98,6 +98,33 @@ export class VaultCryptoService {
     this.activeVaultKey = await this.unlockVaultKey(masterPassword, config);
   }
 
+  async changeMasterPassword(
+    currentPassword: string,
+    newPassword: string,
+    config: CryptoConfig
+  ): Promise<CryptoConfig> {
+    const vaultKey = await this.unlockVaultKey(currentPassword, config);
+    const salt = this.generateSalt();
+    const masterKey = await this.deriveMasterKey(newPassword, salt);
+
+    const { encryptedVaultKey, iv } = await this.encryptVaultKey(
+      vaultKey,
+      masterKey
+    );
+
+    this.activeVaultKey = new Uint8Array(vaultKey);
+    vaultKey.fill(0);
+
+    return {
+      version: 2,
+      kdf: this.KDF,
+      iterations: this.PBKDF2_ITERATIONS,
+      salt: this.bytesToBase64(salt),
+      iv,
+      encryptedVaultKey
+    };
+  }
+
   isVaultUnlocked(): boolean {
     return this.activeVaultKey !== null;
   }
