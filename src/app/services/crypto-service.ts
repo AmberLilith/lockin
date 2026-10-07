@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../../src/environments/environments';
+import { environment } from '../../environments/environments';
 
 @Injectable({ providedIn: 'root' })
 export class CryptoService {
