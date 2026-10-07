@@ -38,6 +38,7 @@ export class ListLoginsComponent implements OnInit, OnDestroy {
   showModalUnlockVault: boolean = false;
   unlockErrorMessage: string = '';
   cryptoConfig: CryptoConfig | null = null;
+  vaultUnlocked: boolean = false;
   
   private loginSubscription?: Subscription;
   loginsList: Login[] = [];
@@ -72,6 +73,7 @@ export class ListLoginsComponent implements OnInit, OnDestroy {
     await this.vaultCryptoService.unlockVault(masterPassword, config);
 
     this.cryptoConfig = config;
+    this.vaultUnlocked = true;
     this.showModalMasterPassword = false;
   }
 
@@ -84,12 +86,7 @@ export class ListLoginsComponent implements OnInit, OnDestroy {
 
     try {
       await this.vaultCryptoService.unlockVault(masterPassword, this.cryptoConfig);
-
-      // Cria novas referências para que os cards executem ngOnChanges
-      // novamente agora que a vaultKey está disponível em memória.
-      this.loginsList = this.loginsList.map(login => ({ ...login }));
-      this.applyFilter();
-
+      this.vaultUnlocked = true;
       this.showModalUnlockVault = false;
     } catch {
       this.unlockErrorMessage = 'Senha mestra incorreta.';
