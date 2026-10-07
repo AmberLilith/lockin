@@ -8,6 +8,8 @@ export class VaultCryptoService {
   readonly KDF = 'PBKDF2';
   readonly PBKDF2_ITERATIONS = 600000;
 
+  private activeVaultKey: Uint8Array | null = null;
+
   generateSalt(): Uint8Array {
     return crypto.getRandomValues(new Uint8Array(16));
   }
@@ -90,6 +92,30 @@ export class VaultCryptoService {
       config.iv,
       masterKey
     );
+  }
+
+  async unlockVault(masterPassword: string, config: CryptoConfig): Promise<void> {
+    this.activeVaultKey = await this.unlockVaultKey(masterPassword, config);
+  }
+
+  isVaultUnlocked(): boolean {
+    return this.activeVaultKey !== null;
+  }
+
+  getActiveVaultKey(): Uint8Array {
+    if (!this.activeVaultKey) {
+      throw new Error('Cofre bloqueado');
+    }
+
+    return new Uint8Array(this.activeVaultKey);
+  }
+
+  lockVault(): void {
+    if (this.activeVaultKey) {
+      this.activeVaultKey.fill(0);
+    }
+
+    this.activeVaultKey = null;
   }
 
   async encryptWithVaultKey(
