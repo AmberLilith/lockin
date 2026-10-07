@@ -51,11 +51,12 @@
   @if(showModalUnlockVault){
     <modal
       [showFooter]="false"
-      (onCancel)="showModalUnlockVault=false"
+      (onCancel)="closeUnlockVaultModal()"
       [title]="'Desbloquear cofre'">
       <app-master-password-unlock
         modal-body
         [errorMessage]="unlockErrorMessage"
+        [passwordChangedSuccess]="passwordChangedSuccess"
         (onConfirm)="unlockVault($event)"
         (onChangePassword)="changeMasterPassword($event)"/>
     </modal>
