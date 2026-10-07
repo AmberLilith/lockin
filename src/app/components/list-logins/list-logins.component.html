@@ -7,6 +7,27 @@
     Novo
   </button>
 
+  @if(vaultUnlocked) {
+    <button
+      class="btn btn-warning m-3"
+      [disabled]="migrationRunning"
+      (click)="showModalConfirmMigration=true">
+      {{ migrationRunning ? 'Migrando...' : 'Migrar criptografia v1 → v2' }}
+    </button>
+  }
+
+  @if(migrationMessage) {
+    <div class="alert alert-success mx-3">
+      {{ migrationMessage }}
+    </div>
+  }
+
+  @if(migrationError) {
+    <div class="alert alert-danger mx-3">
+      {{ migrationError }}
+    </div>
+  }
+
   <div class="input-group mb-3">
     <span class="input-group-text" id="basic-addon1">
       <icon name="search" />
@@ -57,6 +78,17 @@
         modal-body
         [errorMessage]="unlockErrorMessage"
         (onConfirm)="unlockVault($event)"/>
+    </modal>
+  }
+
+  @if(showModalConfirmMigration){
+    <modal
+      [title]="'Migrar criptografia'"
+      [message]="'Esta operação converterá todos os logins v1 para v2 usando a vaultKey atual. O processo será interrompido se algum registro falhar.'"
+      [btnOkText]="'Confirmar migração'"
+      [btnCancelText]="'Cancelar'"
+      (onOk)="migrateEncryption()"
+      (onCancel)="showModalConfirmMigration=false">
     </modal>
   }
 
