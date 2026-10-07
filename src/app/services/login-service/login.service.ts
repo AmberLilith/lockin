@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Database, ref, set, remove, update, listVal } from '@angular/fire/database';
+import { Database, ref, set, remove, update, listVal, get } from '@angular/fire/database';
 import { AuthService } from '../auth-service/auth.service';
 import { Login } from '../../models/Login';
 import { CryptoService } from '../crypto-service';
@@ -56,6 +56,67 @@ export class LoginService {
     }
 
     await update(ref(this.db, `${this.getBasePath()}/${id}`), login);
+  }
+
+  async migrateV1ToV2(): Promise<{ total: number; migrated: number; skipped: number }> {
+    const vaultKey = this.vaultCryptoService.getActiveVaultKey();
+    const loginsRef = ref(this.db, this.getBasePath());
+    const snapshot = await get(loginsRef);
+
+    if (!snapshot.exists()) {
+      return { total: 0, migrated: 0, skipped: 0 };
+    }
+
+    const logins = snapshot.val() as Record<string, Login>;
+    const entries = Object.entries(logins);
+
+    let migrated = 0;
+    let skipped = 0;
+
+    for (const [id, login] of entries) {
+      const cryptoVersion = login.cryptoVersion ?? 1;
+
+      if (cryptoVersion === 2) {
+        skipped++;
+        continue;
+      }
+
+      if (cryptoVersion !== 1) {
+        throw new Error(
+          `Login ${id} possui versão de criptografia não suportada: ${cryptoVersion}`
+        );
+      }
+
+      try {
+        const plainPassword = await this.cryptoService.decrypt(
+          login.password,
+          1
+        );
+
+        const encryptedPassword = await this.vaultCryptoService.encryptWithVaultKey(
+          plainPassword,
+          vaultKey
+        );
+
+        await update(ref(this.db, `${this.getBasePath()}/${id}`), {
+          password: encryptedPassword,
+          cryptoVersion: 2
+        });
+
+        migrated++;
+      } catch (error) {
+        throw new Error(
+          `Falha ao migrar o login ${login.plataformName || id}. Migração interrompida.`,
+          { cause: error }
+        );
+      }
+    }
+
+    return {
+      total: entries.length,
+      migrated,
+      skipped
+    };
   }
 
   async delete(id: string): Promise<void> {
