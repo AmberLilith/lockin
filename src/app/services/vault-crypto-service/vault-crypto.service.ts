@@ -66,6 +66,32 @@ export class VaultCryptoService {
     };
   }
 
+  async unlockVaultKey(
+    masterPassword: string,
+    config: CryptoConfig
+  ): Promise<Uint8Array> {
+    if (config.version !== 2) {
+      throw new Error(`Versão de configuração criptográfica não suportada: ${config.version}`);
+    }
+
+    if (config.kdf !== this.KDF) {
+      throw new Error(`KDF não suportado: ${config.kdf}`);
+    }
+
+    const salt = this.base64ToBytes(config.salt);
+    const masterKey = await this.deriveMasterKey(
+      masterPassword,
+      salt,
+      config.iterations
+    );
+
+    return this.decryptVaultKey(
+      config.encryptedVaultKey,
+      config.iv,
+      masterKey
+    );
+  }
+
   async encryptVaultKey(
     vaultKey: Uint8Array,
     masterKey: CryptoKey
