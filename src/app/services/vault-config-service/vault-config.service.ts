@@ -31,6 +31,17 @@ export class VaultConfigService {
     await set(configRef, config);
   }
 
+  async update(config: CryptoConfig): Promise<void> {
+    const configRef = ref(this.db, this.getConfigPath());
+    const snapshot = await get(configRef);
+
+    if (!snapshot.exists()) {
+      throw new Error('Configuração criptográfica não encontrada.');
+    }
+
+    await set(configRef, config);
+  }
+
   async get(): Promise<CryptoConfig | null> {
     const snapshot = await get(ref(this.db, this.getConfigPath()));
 
