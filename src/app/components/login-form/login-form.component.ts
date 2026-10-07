@@ -1,6 +1,5 @@
 import { Component, ElementRef, EventEmitter, inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Login } from '../../models/Login';
-import { CryptoService } from '../../services/crypto-service';
 import { LoginActionsService } from '../../services/Login-actions-service/login-actions-service';
 import { GeneratePasswordComponent } from '../generate-password/generate-password.component';
 import { IconComponent } from '../icon/icon.component';
@@ -17,7 +16,6 @@ import { VaultCryptoService } from '../../services/vault-crypto-service/vault-cr
 })
 export class LoginFormComponent implements OnInit {
   loginActionsService = inject(LoginActionsService);
-  cryptoService = inject(CryptoService);
   vaultCryptoService = inject(VaultCryptoService);
 
   @Input() login!: Login;
@@ -45,17 +43,10 @@ export class LoginFormComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     if (this.isEditing) {
-      const cryptoVersion = this.login.cryptoVersion ?? 1;
-
-      this.decryptedPassword = cryptoVersion === 2
-        ? await this.vaultCryptoService.decryptWithVaultKey(
-            this.login.password,
-            this.vaultCryptoService.getActiveVaultKey()
-          )
-        : await this.cryptoService.decrypt(
-            this.login.password,
-            cryptoVersion
-          );
+      this.decryptedPassword = await this.vaultCryptoService.decryptWithVaultKey(
+        this.login.password,
+        this.vaultCryptoService.getActiveVaultKey()
+      );
       this.loginFormGroup.patchValue({
         plataformName: this.login.plataformName,
         user: this.login.user,
