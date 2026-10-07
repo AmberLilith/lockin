@@ -4,6 +4,7 @@ import { environment } from '../../../src/environments/environments';
 @Injectable({ providedIn: 'root' })
 export class CryptoService {
 
+  readonly CURRENT_VERSION = 1;
   private readonly SECRET_KEY = environment.cryptoKey; 
 
   // Converte string para CryptoKey usando AES-256-GCM
@@ -19,7 +20,11 @@ export class CryptoService {
   }
 
   // Criptografa — retorna string base64 (iv + dados cifrados)
-  async encrypt(plainText: string): Promise<string> {
+  async encrypt(plainText: string, cryptoVersion: number = this.CURRENT_VERSION): Promise<string> {
+    if (cryptoVersion !== 1) {
+      throw new Error(`Versão de criptografia não suportada: ${cryptoVersion}`);
+    }
+
     const key = await this.getKey();
     const iv = crypto.getRandomValues(new Uint8Array(12)); // 96-bit IV (recomendado para GCM)
     const encoded = new TextEncoder().encode(plainText);
