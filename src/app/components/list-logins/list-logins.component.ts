@@ -11,11 +11,14 @@ import { AuthService } from '../../services/auth-service/auth.service';
 import { ProgressBarComponent } from '../progress-bar/progress-bar.component';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common'; // Importante para o pipe async
+import { MasterPasswordSetupComponent } from '../master-password-setup/master-password-setup.component';
+import { VaultConfigService } from '../../services/vault-config-service/vault-config.service';
+import { VaultCryptoService } from '../../services/vault-crypto-service/vault-crypto.service';
 
 @Component({
   selector: 'app-list-logins',
   standalone: true,
-  imports: [CommonModule, ModalComponent, LoginCardComponent, ProgressBarComponent, IconComponent, LoginFormComponent, AlertComponent],
+  imports: [CommonModule, ModalComponent, LoginCardComponent, ProgressBarComponent, IconComponent, LoginFormComponent, AlertComponent, MasterPasswordSetupComponent],
   templateUrl: './list-logins.component.html',
   styleUrl: './list-logins.component.css'
 })
@@ -23,10 +26,13 @@ export class ListLoginsComponent implements OnInit, OnDestroy {
   themeService = inject(ThemeService);
   loginService = inject(LoginService);
   auth = inject(AuthService);
+  vaultConfigService = inject(VaultConfigService);
+  vaultCryptoService = inject(VaultCryptoService);
   
   showModalCreateLogin: boolean = false;
   showModalConfimExclusion: boolean = false;
   showProgressBar: boolean = true;
+  showModalMasterPassword: boolean = false;
   
   private loginSubscription?: Subscription;
   loginsList: Login[] = [];
@@ -35,7 +41,7 @@ export class ListLoginsComponent implements OnInit, OnDestroy {
 
   @ViewChild('alertCreation') alertCreation!: AlertComponent;
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     // Inscreve-se para receber atualizações do banco em tempo real
     this.loginSubscription = this.loginService.getAll().subscribe({
       next: (logins) => {
@@ -45,6 +51,15 @@ export class ListLoginsComponent implements OnInit, OnDestroy {
       },
       error: () => this.showProgressBar = false
     });
+
+    const cryptoConfig = await this.vaultConfigService.get();
+    this.showModalMasterPassword = !cryptoConfig;
+  }
+
+  async setupMasterPassword(masterPassword: string): Promise<void> {
+    const config = await this.vaultCryptoService.createCryptoConfig(masterPassword);
+    await this.vaultConfigService.save(config);
+    this.showModalMasterPassword = false;
   }
 
   getLoginByPlataformName(searchTerm: string): void {
