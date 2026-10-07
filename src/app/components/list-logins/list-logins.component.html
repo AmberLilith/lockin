@@ -21,8 +21,9 @@
 
   <div class="cards-container">
     @for (item of loginsListToShow; track item.id) {
-      <login-card 
-          [login]="item">
+      <login-card
+          [login]="item"
+          [vaultUnlocked]="vaultUnlocked">
       </login-card>
     }
   </div>
