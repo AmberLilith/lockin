@@ -84,6 +84,12 @@ export class ListLoginsComponent implements OnInit, OnDestroy {
 
     try {
       await this.vaultCryptoService.unlockVault(masterPassword, this.cryptoConfig);
+
+      // Cria novas referências para que os cards executem ngOnChanges
+      // novamente agora que a vaultKey está disponível em memória.
+      this.loginsList = this.loginsList.map(login => ({ ...login }));
+      this.applyFilter();
+
       this.showModalUnlockVault = false;
     } catch {
       this.unlockErrorMessage = 'Senha mestra incorreta.';
