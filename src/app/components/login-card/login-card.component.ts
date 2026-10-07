@@ -23,6 +23,7 @@ export class LoginCardComponent {
   vaultCryptoService = inject(VaultCryptoService);
 
   @Input() login!: Login;
+  @Input() vaultUnlocked: boolean = false;
   @Output() onDelete = new EventEmitter<void>();
   @Output() onEdit = new EventEmitter<void>();
 
