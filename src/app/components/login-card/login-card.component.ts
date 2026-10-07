@@ -33,7 +33,10 @@ export class LoginCardComponent {
   @ViewChild('alertEdition') alertEdition!: AlertComponent;
 
   async ngOnInit(): Promise<void> {
-    this.decryptedPassword = await this.cryptoService.decrypt(this.login.password);
+    this.decryptedPassword = await this.cryptoService.decrypt(
+      this.login.password,
+      this.login.cryptoVersion ?? 1
+    );
   }
 
   async ngOnChanges(){
