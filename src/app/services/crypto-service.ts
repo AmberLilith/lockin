@@ -39,7 +39,11 @@ export class CryptoService {
   }
 
   // Descriptografa — recebe string base64 e retorna texto original
-  async decrypt(cipherText: string): Promise<string> {
+  async decrypt(cipherText: string, cryptoVersion: number = 1): Promise<string> {
+    if (cryptoVersion !== 1) {
+      throw new Error(`Versão de criptografia não suportada: ${cryptoVersion}`);
+    }
+
     const key = await this.getKey();
     const combined = Uint8Array.from(atob(cipherText), c => c.charCodeAt(0));
 
