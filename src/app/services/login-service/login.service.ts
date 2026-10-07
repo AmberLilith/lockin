@@ -25,20 +25,26 @@ export class LoginService {
 
   async create(login: Omit<Login, 'id'>): Promise<void> {
     const newId = crypto.randomUUID();
-    const encryptedPassword = await this.cryptoService.encrypt(login.password);
+    const encryptedPassword = await this.cryptoService.encrypt(
+      login.password,
+      this.cryptoService.CURRENT_VERSION
+    );
     const newLogin: Login = {
       ...login,
       id: newId,
       password: encryptedPassword,
-      cryptoVersion: 1
+      cryptoVersion: this.cryptoService.CURRENT_VERSION
     };
     await set(ref(this.db, `${this.getBasePath()}/${newId}`), newLogin);
   }
 
   async update(id: string, login: Partial<Login>): Promise<void> {
     if (login.password) {
-      login.password = await this.cryptoService.encrypt(login.password);
-      login.cryptoVersion = 1;
+      login.password = await this.cryptoService.encrypt(
+        login.password,
+        this.cryptoService.CURRENT_VERSION
+      );
+      login.cryptoVersion = this.cryptoService.CURRENT_VERSION;
     }
     await update(ref(this.db, `${this.getBasePath()}/${id}`), login);
   }
