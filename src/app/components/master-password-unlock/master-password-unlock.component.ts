@@ -15,12 +15,14 @@ export interface MasterPasswordChange {
 })
 export class MasterPasswordUnlockComponent {
   @Input() errorMessage: string = '';
+  @Input() passwordChangedSuccess: boolean = false;
   @Output() onConfirm = new EventEmitter<string>();
   @Output() onChangePassword = new EventEmitter<MasterPasswordChange>();
 
   changeMode: boolean = false;
   changeErrorMessage: string = '';
   passwordLength: number = 20;
+  copyMessage: string = '';
 
   form = new FormGroup({
     masterPassword: new FormControl('', Validators.required)
@@ -109,6 +111,19 @@ export class MasterPasswordUnlockComponent {
     });
 
     this.changeErrorMessage = '';
+    this.copyMessage = '';
+  }
+
+  async copyNewPassword(): Promise<void> {
+    const password = this.newPassword?.value;
+
+    if (!password) {
+      this.copyMessage = 'Gere ou informe uma nova senha primeiro.';
+      return;
+    }
+
+    await navigator.clipboard.writeText(password);
+    this.copyMessage = 'Senha copiada.';
   }
 
   private secureRandomChar(charset: string): string {
