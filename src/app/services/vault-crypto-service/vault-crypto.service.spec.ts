@@ -48,4 +48,23 @@ describe('VaultCryptoService', () => {
     expect(recoveredVaultKey.length).toBe(32);
   });
 
+
+  it('deve criptografar e descriptografar uma senha usando a vaultKey', async () => {
+    const plainPassword = 'SenhaDeLogin@123';
+    const vaultKey = service.generateVaultKey();
+
+    const encryptedPassword = await service.encryptWithVaultKey(
+      plainPassword,
+      vaultKey
+    );
+
+    const decryptedPassword = await service.decryptWithVaultKey(
+      encryptedPassword,
+      vaultKey
+    );
+
+    expect(encryptedPassword).not.toBe(plainPassword);
+    expect(decryptedPassword).toBe(plainPassword);
+  });
+
 });
