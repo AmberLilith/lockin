@@ -36,6 +36,17 @@
     </modal>
   }
 
+  @if(showModalMasterPassword){
+    <modal
+      [showFooter]="false"
+      (onCancel)="showModalMasterPassword=false"
+      [title]="'Configurar senha mestra'">
+      <app-master-password-setup
+        modal-body
+        (onConfirm)="setupMasterPassword($event)"/>
+    </modal>
+  }
+
   @if(showModalCreateLogin){
     <modal [showFooter]="false" (onCancel)="showModalCreateLogin=false" [title]="'Criar Login'">
       <login-form modal-body (onCancel)="showModalCreateLogin=false" (onOk)="save($event)"/>
