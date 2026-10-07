@@ -1,6 +1,5 @@
 import { Component, EventEmitter, inject, Input, Output, ViewChild } from '@angular/core';
 import { Login } from '../../models/Login';
-import { CryptoService } from '../../services/crypto-service';
 import { LoginActionsService } from '../../services/Login-actions-service/login-actions-service';
 import { LoginService } from '../../services/login-service/login.service';
 import { IconComponent } from '../icon/icon.component';
@@ -17,7 +16,6 @@ import { VaultCryptoService } from '../../services/vault-crypto-service/vault-cr
   styleUrl: './login-card.component.css'
 })
 export class LoginCardComponent {
-  cryptoService = inject(CryptoService);
   loginActionsService = inject(LoginActionsService);
   loginService = inject(LoginService);
   vaultCryptoService = inject(VaultCryptoService);
@@ -46,24 +44,14 @@ export class LoginCardComponent {
   }
 
   private async loadDecryptedPassword(): Promise<void> {
-    const cryptoVersion = this.login.cryptoVersion ?? 1;
-
-    if (cryptoVersion === 2) {
-      if (!this.vaultCryptoService.isVaultUnlocked()) {
-        this.decryptedPassword = '';
-        return;
-      }
-
-      this.decryptedPassword = await this.vaultCryptoService.decryptWithVaultKey(
-        this.login.password,
-        this.vaultCryptoService.getActiveVaultKey()
-      );
+    if (!this.vaultCryptoService.isVaultUnlocked()) {
+      this.decryptedPassword = '';
       return;
     }
 
-    this.decryptedPassword = await this.cryptoService.decrypt(
+    this.decryptedPassword = await this.vaultCryptoService.decryptWithVaultKey(
       this.login.password,
-      cryptoVersion
+      this.vaultCryptoService.getActiveVaultKey()
     );
   }
 
