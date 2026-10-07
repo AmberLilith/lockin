@@ -43,7 +43,10 @@ export class LoginFormComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     if (this.isEditing) {
-      this.decryptedPassword = await this.cryptoService.decrypt(this.login.password);
+      this.decryptedPassword = await this.cryptoService.decrypt(
+        this.login.password,
+        this.login.cryptoVersion ?? 1
+      );
       this.loginFormGroup.patchValue({
         plataformName: this.login.plataformName,
         user: this.login.user,
