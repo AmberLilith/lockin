@@ -9,6 +9,7 @@ IMPORTANTE:
 Lembre sempre de ao chamar o método decryptFirebaseLogins, substituir 'sua-chave-secreta-32-caracteres!!' pela mesma que foi usada para encriptar
 </p>
 
+
 ## Encriptografar
 
 ```
