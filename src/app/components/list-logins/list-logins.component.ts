@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common'; // Importante para o pipe async
 import { MasterPasswordSetupComponent } from '../master-password-setup/master-password-setup.component';
 import { VaultConfigService } from '../../services/vault-config-service/vault-config.service';
 import { VaultCryptoService } from '../../services/vault-crypto-service/vault-crypto.service';
-import { MasterPasswordUnlockComponent } from '../master-password-unlock/master-password-unlock.component';
+import { MasterPasswordChange, MasterPasswordUnlockComponent } from '../master-password-unlock/master-password-unlock.component';
 import { CryptoConfig } from '../../models/CryptoConfig';
 
 @Component({
@@ -90,6 +90,31 @@ export class ListLoginsComponent implements OnInit, OnDestroy {
       this.showModalUnlockVault = false;
     } catch {
       this.unlockErrorMessage = 'Senha mestra incorreta.';
+    }
+  }
+
+  async changeMasterPassword(change: MasterPasswordChange): Promise<void> {
+    if (!this.cryptoConfig) {
+      return;
+    }
+
+    this.unlockErrorMessage = '';
+
+    try {
+      const newConfig = await this.vaultCryptoService.changeMasterPassword(
+        change.currentPassword,
+        change.newPassword,
+        this.cryptoConfig
+      );
+
+      await this.vaultConfigService.update(newConfig);
+
+      this.cryptoConfig = newConfig;
+      this.vaultUnlocked = true;
+      this.showModalUnlockVault = false;
+    } catch {
+      this.vaultCryptoService.lockVault();
+      this.unlockErrorMessage = 'Não foi possível alterar a senha mestra. Confira a senha atual.';
     }
   }
 
