@@ -48,6 +48,11 @@ export class LoginCardComponent {
     const cryptoVersion = this.login.cryptoVersion ?? 1;
 
     if (cryptoVersion === 2) {
+      if (!this.vaultCryptoService.isVaultUnlocked()) {
+        this.decryptedPassword = '';
+        return;
+      }
+
       this.decryptedPassword = await this.vaultCryptoService.decryptWithVaultKey(
         this.login.password,
         this.vaultCryptoService.getActiveVaultKey()
