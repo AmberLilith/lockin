@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { CryptoConfig } from '../../models/CryptoConfig';
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +44,26 @@ export class VaultCryptoService {
       false,
       ['encrypt', 'decrypt']
     );
+  }
+
+  async createCryptoConfig(masterPassword: string): Promise<CryptoConfig> {
+    const salt = this.generateSalt();
+    const vaultKey = this.generateVaultKey();
+    const masterKey = await this.deriveMasterKey(masterPassword, salt);
+
+    const { encryptedVaultKey, iv } = await this.encryptVaultKey(
+      vaultKey,
+      masterKey
+    );
+
+    return {
+      version: 2,
+      kdf: this.KDF,
+      iterations: this.PBKDF2_ITERATIONS,
+      salt: this.bytesToBase64(salt),
+      iv,
+      encryptedVaultKey
+    };
   }
 
   async encryptVaultKey(
