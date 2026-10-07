@@ -44,6 +44,12 @@ export class MasterPasswordSetupComponent {
       return;
     }
 
-    this.onConfirm.emit(this.masterPassword.value!);
+    const masterPassword = this.masterPassword?.value;
+
+    if (!masterPassword) {
+      return;
+    }
+
+    this.onConfirm.emit(masterPassword);
   }
 }
