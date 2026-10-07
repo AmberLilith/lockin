@@ -92,6 +92,59 @@ export class VaultCryptoService {
     );
   }
 
+  async encryptWithVaultKey(
+    plainText: string,
+    vaultKey: Uint8Array
+  ): Promise<string> {
+    const key = await crypto.subtle.importKey(
+      'raw',
+      vaultKey,
+      { name: 'AES-GCM' },
+      false,
+      ['encrypt']
+    );
+
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const encoded = new TextEncoder().encode(plainText);
+
+    const encrypted = await crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv },
+      key,
+      encoded
+    );
+
+    const combined = new Uint8Array(iv.length + encrypted.byteLength);
+    combined.set(iv, 0);
+    combined.set(new Uint8Array(encrypted), iv.length);
+
+    return this.bytesToBase64(combined);
+  }
+
+  async decryptWithVaultKey(
+    cipherText: string,
+    vaultKey: Uint8Array
+  ): Promise<string> {
+    const key = await crypto.subtle.importKey(
+      'raw',
+      vaultKey,
+      { name: 'AES-GCM' },
+      false,
+      ['decrypt']
+    );
+
+    const combined = this.base64ToBytes(cipherText);
+    const iv = combined.slice(0, 12);
+    const data = combined.slice(12);
+
+    const decrypted = await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv },
+      key,
+      data
+    );
+
+    return new TextDecoder().decode(decrypted);
+  }
+
   async encryptVaultKey(
     vaultKey: Uint8Array,
     masterKey: CryptoKey
