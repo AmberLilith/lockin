@@ -44,4 +44,47 @@ export class VaultCryptoService {
       ['encrypt', 'decrypt']
     );
   }
+
+  async encryptVaultKey(
+    vaultKey: Uint8Array,
+    masterKey: CryptoKey
+  ): Promise<{ encryptedVaultKey: string; iv: string }> {
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+
+    const encrypted = await crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv },
+      masterKey,
+      vaultKey
+    );
+
+    return {
+      encryptedVaultKey: this.bytesToBase64(new Uint8Array(encrypted)),
+      iv: this.bytesToBase64(iv)
+    };
+  }
+
+  async decryptVaultKey(
+    encryptedVaultKey: string,
+    iv: string,
+    masterKey: CryptoKey
+  ): Promise<Uint8Array> {
+    const encryptedBytes = this.base64ToBytes(encryptedVaultKey);
+    const ivBytes = this.base64ToBytes(iv);
+
+    const decrypted = await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: ivBytes },
+      masterKey,
+      encryptedBytes
+    );
+
+    return new Uint8Array(decrypted);
+  }
+
+  private bytesToBase64(bytes: Uint8Array): string {
+    return btoa(String.fromCharCode(...bytes));
+  }
+
+  private base64ToBytes(value: string): Uint8Array {
+    return Uint8Array.from(atob(value), char => char.charCodeAt(0));
+  }
 }
