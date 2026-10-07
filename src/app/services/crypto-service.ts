@@ -4,11 +4,23 @@ import { environment } from '../../environments/environments';
 @Injectable({ providedIn: 'root' })
 export class CryptoService {
 
-  private readonly SECRET_KEY = environment.cryptoKey; 
+  readonly CURRENT_VERSION = 1;
+  private readonly LEGACY_KEY_V1 = environment.cryptoKey;
 
-  // Converte string para CryptoKey usando AES-256-GCM
-  private async getKey(): Promise<CryptoKey> {
-    const keyMaterial = new TextEncoder().encode(this.SECRET_KEY.padEnd(32).slice(0, 32));
+  // Converte a chave correspondente à versão em CryptoKey
+  private async getKey(cryptoVersion: number): Promise<CryptoKey> {
+    let secretKey: string;
+
+    switch (cryptoVersion) {
+      case 1:
+        secretKey = this.LEGACY_KEY_V1;
+        break;
+      default:
+        throw new Error(`Versão de criptografia não suportada: ${cryptoVersion}`);
+    }
+
+    const keyMaterial = new TextEncoder().encode(secretKey.padEnd(32).slice(0, 32));
+
     return crypto.subtle.importKey(
       'raw',
       keyMaterial,
@@ -19,8 +31,8 @@ export class CryptoService {
   }
 
   // Criptografa — retorna string base64 (iv + dados cifrados)
-  async encrypt(plainText: string): Promise<string> {
-    const key = await this.getKey();
+  async encrypt(plainText: string, cryptoVersion: number = this.CURRENT_VERSION): Promise<string> {
+    const key = await this.getKey(cryptoVersion);
     const iv = crypto.getRandomValues(new Uint8Array(12)); // 96-bit IV (recomendado para GCM)
     const encoded = new TextEncoder().encode(plainText);
 
@@ -39,8 +51,8 @@ export class CryptoService {
   }
 
   // Descriptografa — recebe string base64 e retorna texto original
-  async decrypt(cipherText: string): Promise<string> {
-    const key = await this.getKey();
+  async decrypt(cipherText: string, cryptoVersion: number = 1): Promise<string> {
+    const key = await this.getKey(cryptoVersion);
     const combined = Uint8Array.from(atob(cipherText), c => c.charCodeAt(0));
 
     const iv = combined.slice(0, 12);           // primeiros 12 bytes = IV
