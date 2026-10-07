@@ -7,6 +7,7 @@ import { IconComponent } from '../icon/icon.component';
 import { LoginFormComponent } from "../login-form/login-form.component";
 import { ModalComponent } from '../modal/modal.component';
 import { AlertComponent } from '../alert/alert.component';
+import { VaultCryptoService } from '../../services/vault-crypto-service/vault-crypto.service';
 
 @Component({
   selector: 'login-card',
@@ -19,6 +20,7 @@ export class LoginCardComponent {
   cryptoService = inject(CryptoService);
   loginActionsService = inject(LoginActionsService);
   loginService = inject(LoginService);
+  vaultCryptoService = inject(VaultCryptoService);
 
   @Input() login!: Login;
   @Output() onDelete = new EventEmitter<void>();
@@ -33,14 +35,30 @@ export class LoginCardComponent {
   @ViewChild('alertEdition') alertEdition!: AlertComponent;
 
   async ngOnInit(): Promise<void> {
-    this.decryptedPassword = await this.cryptoService.decrypt(
-      this.login.password,
-      this.login.cryptoVersion ?? 1
-    );
+    await this.loadDecryptedPassword();
   }
 
-  async ngOnChanges(){
-    this.decryptedPassword = await this.cryptoService.decrypt(this.login.password);
+  async ngOnChanges(): Promise<void> {
+    if (this.login) {
+      await this.loadDecryptedPassword();
+    }
+  }
+
+  private async loadDecryptedPassword(): Promise<void> {
+    const cryptoVersion = this.login.cryptoVersion ?? 1;
+
+    if (cryptoVersion === 2) {
+      this.decryptedPassword = await this.vaultCryptoService.decryptWithVaultKey(
+        this.login.password,
+        this.vaultCryptoService.getActiveVaultKey()
+      );
+      return;
+    }
+
+    this.decryptedPassword = await this.cryptoService.decrypt(
+      this.login.password,
+      cryptoVersion
+    );
   }
 
   async delete(): Promise<void> {
