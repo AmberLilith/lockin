@@ -62,9 +62,14 @@ export class ListLoginsComponent implements OnInit, OnDestroy {
     this.cryptoConfig = await this.vaultConfigService.get();
 
     if (!this.cryptoConfig) {
+      this.vaultUnlocked = false;
       this.showModalMasterPassword = true;
-    } else if (!this.vaultCryptoService.isVaultUnlocked()) {
-      this.showModalUnlockVault = true;
+    } else {
+      this.vaultUnlocked = this.vaultCryptoService.isVaultUnlocked();
+
+      if (!this.vaultUnlocked) {
+        this.showModalUnlockVault = true;
+      }
     }
   }
 
