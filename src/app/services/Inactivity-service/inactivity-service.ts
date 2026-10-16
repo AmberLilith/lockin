@@ -2,12 +2,14 @@ import { inject, Injectable } from '@angular/core';
 import { Auth, signOut } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { NotificationService } from '../notification-service/notification.service';
+import { VaultCryptoService } from '../vault-crypto-service/vault-crypto.service';
 
 @Injectable({ providedIn: 'root' })
 export class InactivityService {
   private auth = inject(Auth);
   private router = inject(Router);
   private notificationService = inject(NotificationService);
+  private vaultCryptoService = inject(VaultCryptoService);
 
   private timer: any;
   private readonly TIMEOUT = 5 * 60 * 1000;
@@ -29,6 +31,7 @@ export class InactivityService {
   private async lock(): Promise<void> {
     this.isLocked = true;
     clearTimeout(this.timer);
+    this.vaultCryptoService.lockVault();
     await signOut(this.auth);
     this.notificationService.show('Sessão encerrada por inatividade', 'warning');
     this.router.navigate(['/login']);
