@@ -3,12 +3,14 @@ import { Auth, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEma
 
 import { Router } from '@angular/router';
 import { InactivityService } from '../Inactivity-service/inactivity-service';
+import { VaultCryptoService } from '../vault-crypto-service/vault-crypto.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private auth = inject(Auth);
   private router = inject(Router);
-  private inactivityService = inject(InactivityService)
+  private inactivityService = inject(InactivityService);
+  private vaultCryptoService = inject(VaultCryptoService);
 
   user$ = user(this.auth);
 
@@ -30,6 +32,7 @@ export class AuthService {
   }
 
   async logout(): Promise<void> {
+    this.vaultCryptoService.lockVault();
     await signOut(this.auth);
     this.router.navigate(['/login']);
   }
