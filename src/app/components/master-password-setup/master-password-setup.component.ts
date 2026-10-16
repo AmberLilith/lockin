@@ -10,6 +10,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 })
 export class MasterPasswordSetupComponent {
   @Output() onConfirm = new EventEmitter<string>();
+  @Output() onExit = new EventEmitter<void>();
 
   errorMessage: string = '';
 
