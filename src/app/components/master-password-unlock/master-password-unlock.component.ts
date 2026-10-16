@@ -18,6 +18,8 @@ export class MasterPasswordUnlockComponent {
   @Input() passwordChangedSuccess: boolean = false;
   @Output() onConfirm = new EventEmitter<string>();
   @Output() onChangePassword = new EventEmitter<MasterPasswordChange>();
+  @Output() onExit = new EventEmitter<void>();
+  @Output() onContinue = new EventEmitter<void>();
 
   changeMode: boolean = false;
   changeErrorMessage: string = '';
