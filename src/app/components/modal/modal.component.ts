@@ -17,6 +17,7 @@ export class ModalComponent {
   @Input() btnCancelEnabled: boolean = true;
   @Input() showFooter: boolean = true;
   @Input() showHeader: boolean = true;
+  @Input() showCloseButton: boolean = true;
 
   @Output() onOk = new EventEmitter<void>();
   @Output() onCancel = new EventEmitter<void>();
