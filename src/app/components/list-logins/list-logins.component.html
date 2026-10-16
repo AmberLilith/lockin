@@ -40,25 +40,28 @@
   @if(showModalMasterPassword){
     <modal
       [showFooter]="false"
-      (onCancel)="showModalMasterPassword=false"
+      [showCloseButton]="false"
       [title]="'Configurar senha mestra'">
       <app-master-password-setup
         modal-body
-        (onConfirm)="setupMasterPassword($event)"/>
+        (onConfirm)="setupMasterPassword($event)"
+        (onExit)="auth.logout()"/>
     </modal>
   }
 
   @if(showModalUnlockVault){
     <modal
       [showFooter]="false"
-      (onCancel)="closeUnlockVaultModal()"
+      [showCloseButton]="false"
       [title]="'Desbloquear cofre'">
       <app-master-password-unlock
         modal-body
         [errorMessage]="unlockErrorMessage"
         [passwordChangedSuccess]="passwordChangedSuccess"
         (onConfirm)="unlockVault($event)"
-        (onChangePassword)="changeMasterPassword($event)"/>
+        (onChangePassword)="changeMasterPassword($event)"
+        (onExit)="auth.logout()"
+        (onContinue)="closeUnlockVaultModal()"/>
     </modal>
   }
 
