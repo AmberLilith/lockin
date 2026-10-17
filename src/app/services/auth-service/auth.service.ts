@@ -20,6 +20,7 @@ export class AuthService {
 
   async loginWithEmail(email: string, password: string): Promise<void> {
     await signInWithEmailAndPassword(this.auth, email, password);
+    this.vaultCryptoService.lockVault();
     this.inactivityService.start(); // ← inicia o monitoramento
     this.router.navigate(['/home']);
   }
@@ -27,6 +28,7 @@ export class AuthService {
   async loginWithGoogle(): Promise<void> {
     const provider = new GoogleAuthProvider();
     await signInWithPopup(this.auth, provider);
+    this.vaultCryptoService.lockVault();
     this.inactivityService.start(); // ← inicia o monitoramento
     this.router.navigate(['/home']);
   }
