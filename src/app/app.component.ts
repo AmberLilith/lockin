@@ -5,6 +5,7 @@ import { AlertComponent } from './components/alert/alert.component';
 import { HeaderComponent } from './components/header/header.component';
 import { InactivityService } from './services/Inactivity-service/inactivity-service';
 import { NotificationService } from './services/notification-service/notification.service';
+import { VaultCryptoService } from './services/vault-crypto-service/vault-crypto.service';
 
 @Component({
   selector: 'app-root',
@@ -17,12 +18,16 @@ export class AppComponent {
   title = 'lockin';
   inactivityService = inject(InactivityService);
   notificationService = inject(NotificationService);
+  vaultCryptoService = inject(VaultCryptoService);
 
   @ViewChild('globalAlert') globalAlert!: AlertComponent;
   alertMessage: string = '';
   alertType: 'success' | 'danger' | 'warning' | 'info' = 'success';
 
   ngOnInit(): void {
+    // Toda nova abertura/reinicialização do app começa com o cofre bloqueado.
+    this.vaultCryptoService.lockVault();
+
     this.notificationService.onNotification$.subscribe(notification => {
       this.alertMessage = notification.message;
       this.alertType = notification.type;
